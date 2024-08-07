@@ -6,7 +6,8 @@
   "license": "MIT",
   "author": "PSE",
   "scripts": {
-    "build": "pnpm --recursive --sort run build"
+    "build": "pnpm --recursive --sort run build",
+    "dev:server": "pnpm --filter backend run dev"
   },
   "engines": {
     "node": "20",
