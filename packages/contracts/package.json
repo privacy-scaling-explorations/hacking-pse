@@ -6,7 +6,7 @@
     "clean": "rm -rf cache out",
     "build": "forge build",
     "dev": "anvil",
-    "hackathon:deploy": "forge script script/Hackathon.s.sol:Deploy",
+    "hackathon:deploy-sepolia": ". ./.env && forge script --chain sepolia script/Hackathon.s.sol:Deploy --fork-url $SEPOLIA_RPC_URL --broadcast --verify -vvvv",
     "format": "forge fmt",
     "format:check": "forge fmt --check",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
