@@ -1,0 +1,8 @@
+# dir
+node_modules
+out
+coverage
+cache
+
+# files
+pnpm-lock.yaml

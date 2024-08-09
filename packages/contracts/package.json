@@ -1,0 +1,26 @@
+{
+  "name": "contracts",
+  "version": "0.0.1",
+  "description": "PSE hackathon contracts",
+  "scripts": {
+    "clean": "rm -rf cache out",
+    "build": "forge build",
+    "format": "forge fmt",
+    "format:check": "forge fmt --check",
+    "prettier:check": "prettier --check \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
+    "prettier:write": "prettier --write \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
+    "test": "forge test",
+    "test:coverage": "forge coverage",
+    "lint": "pnpm run lint:sol",
+    "lint:sol": "pnpm run format:check && pnpm solhint {script,src,test}/**/*.sol"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "forge-std": "github:foundry-rs/forge-std#v1.8.1",
+    "solhint": "^5.0.3",
+    "solhint-plugin-prettier": "^0.1.0",
+    "prettier": "^3.3.3"
+  }
+}
