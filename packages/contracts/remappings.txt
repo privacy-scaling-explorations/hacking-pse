@@ -1,1 +1,4 @@
 forge-std/=node_modules/forge-std/
+@semaphore-protocol/contracts/=node_modules/@semaphore-protocol/contracts/
+@zk-kit/excubiae/=node_modules/@zk-kit/excubiae/
+@zk-kit/lean-imt.sol/=node_modules/@zk-kit/lean-imt.sol/

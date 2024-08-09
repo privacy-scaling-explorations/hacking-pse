@@ -5,6 +5,8 @@
   "scripts": {
     "clean": "rm -rf cache out",
     "build": "forge build",
+    "dev": "anvil",
+    "hackathon:deploy": "forge script script/Hackathon.s.sol:Deploy",
     "format": "forge fmt",
     "format:check": "forge fmt --check",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
@@ -17,6 +19,13 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "@semaphore-protocol/contracts": "4.0.1",
+    "@openzeppelin/contracts": "5.0.2",
+    "@zk-kit/excubiae": "0.1.0",
+    "@zk-kit/lean-imt.sol": "2.0.0",
+    "poseidon-solidity": "0.0.5"
+  },
   "devDependencies": {
     "forge-std": "github:foundry-rs/forge-std#v1.8.1",
     "solhint": "^5.0.3",
