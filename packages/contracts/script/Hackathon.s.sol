@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 import { Script } from "forge-std/src/Script.sol";
@@ -15,10 +15,8 @@ contract Deploy is Script {
     uint256[] public CRITERION_HATS = [0, 1, 2];
 
     function run() external {
-        // @todo uncomment this.
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        // vm.startBroadcast();
 
         // Deploy HatsExcubia
         HatsExcubia hatsExcubia = new HatsExcubia(HATS_ADDRESS, CRITERION_HATS);
