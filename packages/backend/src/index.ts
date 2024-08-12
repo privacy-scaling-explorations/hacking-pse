@@ -5,6 +5,9 @@ import cors from "cors"
 
 import { sendOtp, verifyOtp } from './otp'
 import { getDb, initDb } from './db'
+import { hatsClient } from './hats'
+import { HAT_ID } from './constants'
+import { account } from './account'
 
 const app = express()
 const port = 3000
@@ -72,6 +75,18 @@ app.post('/verify-otp', async (req, res) => {
         const db = await getDb();
 
         try {
+            // mint the hat
+            const mintRes = await hatsClient.mintHat({
+                account,
+                hatId: BigInt(HAT_ID),
+                wearer: address as `0x${string}`,
+            })
+
+            // we want to throw an error if the minting failed
+            if (!mintRes.status) {
+                throw new Error('Failed to mint hat')
+            }
+
             // store the address in the db and give hat 
             const stmt = await db.prepare('INSERT INTO accounts (email, address) VALUES (?, ?)')
             await stmt.run(email, address)
