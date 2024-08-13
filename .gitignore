@@ -41,3 +41,7 @@ dist
 
 packages/backend/.env 
 packages/backend/db.db 
+
+test-results
+playwright-report
+.next 
