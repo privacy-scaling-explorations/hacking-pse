@@ -34,14 +34,22 @@ const SignupPage = (): JSX.Element => {
         </Heading>
 
         <p className="flex max-w-screen-md gap-2 text-center text-xl dark:text-gray-400">
-          <span>{config.startsAt && format(config.startsAt, "d MMMM, yyyy")}</span>
+          <span>
+            {config.startsAt && format(config.startsAt, "d MMMM, yyyy")}
+          </span>
 
           <span>-</span>
 
-          <span>{config.resultsAt && format(config.resultsAt, "d MMMM, yyyy")}</span>
+          <span>
+            {config.resultsAt && format(config.resultsAt, "d MMMM, yyyy")}
+          </span>
         </p>
 
-        {!isConnected && <ConnectButton />}
+        <Button size="auto" variant="primary">
+          <Link href="/signup/registerEmail">Register</Link>
+        </Button>
+
+        {/* {!isConnected && <ConnectButton />} */}
 
         {isConnected && appState === EAppState.APPLICATION && (
           <Button size="auto" variant="primary">
