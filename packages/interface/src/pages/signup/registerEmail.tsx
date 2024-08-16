@@ -18,43 +18,67 @@ import {
 import { Button } from "~/components/ui/Button";
 
 const RegisterEmail = (): JSX.Element => {
-  const [otpEmailSent, setOtpEmailSent] = useState(false);
+  const [email, setEmail] = useState<Email>();
   const router = useRouter();
 
-  const registerEmail = async (email: Email) => {
-    console.log("OTP has been sent to ", email);
+  const registerEmail = async (emailAddr: Email) => {
+    const url = "http://localhost:3001/send-otp";
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailAddr),
+      });
 
-    // TODO: (merge-ok) add this logic after scaffolding flow
-    // const url = "http://localhost:3001/send-otp";
-    // try {
-    //   const response = await fetch(url, {
-    //     method: "POST",
-    //     body: JSON.stringify({ email: email }),
-    //   });
-    //   if (!response.ok) {
-    //     console.log(response.status);
-    //   } else {
-    //     console.log(response);
-    //   }
-    // } catch (error: any) {
-    //   console.error(error);
-    // }
-    setOtpEmailSent(true);
+      if (!response.ok) {
+        console.log(response.status);
+        console.log(await response.json());
+      } else {
+        setEmail(emailAddr);
+        console.log("OTP has been sent to ", email);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
   };
 
   const verifyOtp = async (otp: OTP) => {
     console.log("Verifying OTP: ", otp);
-
     const account = await generateEmbeddedAccount();
-    await joinSemaporeGroup(account);
 
-    // update state so that other options now show on signup page?
-    router.push("/signup");
+    try {
+      const url = "http://localhost:3001/verify-otp";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email?.email,
+          otp: otp.otp,
+          address: account,
+        }),
+      });
+
+      if (!response.ok) {
+        console.log(response.status);
+        console.log(await response.json());
+      } else {
+        await joinSemaporeGroup(account);
+
+        // update state so that other options now show on signup page?
+        router.push("/signup");
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
   };
 
   const generateEmbeddedAccount = async () => {
     console.log("Generating new account");
-    return "";
+    return "0x91AdDB0E8443C83bAf2aDa6B8157B38f814F0bcC"; // TODO: (merge-ok) hardcoded address will be swapped for generated account address in next PR
   };
 
   const joinSemaporeGroup = async (account: string) => {
@@ -109,7 +133,7 @@ const RegisterEmail = (): JSX.Element => {
             </Button>
           </FormSection>
         </Form>
-        {otpEmailSent && (
+        {email && (
           <Form schema={OtpSchema} onSubmit={(otp) => verifyOtp(otp)}>
             <FormSection
               description="Please enter the one-time-password (OTP) you recieved in your email"
