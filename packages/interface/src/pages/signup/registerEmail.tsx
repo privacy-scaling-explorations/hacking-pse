@@ -124,7 +124,7 @@ const RegisterEmail = (): JSX.Element => {
             <FormControl
               required
               hint="This is your 'pse.dev' email address"
-              label="EmailField address"
+              label="Email address"
               name="email"
             >
               <Input placeholder="bob@pse.dev" />
