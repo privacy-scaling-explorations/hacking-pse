@@ -10,18 +10,18 @@ import { Layout } from "~/layouts/DefaultLayout";
 import { Form, FormControl, FormSection } from "~/components/ui/Form";
 import { Input } from "~/components/ui/Input";
 import {
-  EmailSchema,
-  Email,
-  OtpSchema,
-  OTP,
+  EmailFieldSchema,
+  EmailField,
+  OtpFieldSchema,
+  OtpField,
 } from "../../features/signup/types";
 import { Button } from "~/components/ui/Button";
 
 const RegisterEmail = (): JSX.Element => {
-  const [email, setEmail] = useState<Email>();
+  const [emailField, setEmail] = useState<EmailField>();
   const router = useRouter();
 
-  const registerEmail = async (emailAddr: Email) => {
+  const registerEmail = async (emailField: EmailField) => {
     const url = "http://localhost:3001/send-otp";
     try {
       const response = await fetch(url, {
@@ -29,24 +29,27 @@ const RegisterEmail = (): JSX.Element => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailAddr),
+        body: JSON.stringify(emailField),
       });
 
       if (!response.ok) {
         console.log(response.status);
         console.log(await response.json());
       } else {
-        setEmail(emailAddr);
-        console.log("OTP has been sent to ", email);
+        setEmail(emailField);
+        console.log("OTP has been sent to ", emailField.email);
       }
     } catch (error: any) {
       console.error(error);
     }
   };
 
-  const verifyOtp = async (otp: OTP) => {
-    console.log("Verifying OTP: ", otp);
+  const verifyOtp = async (otpField: OtpField) => {
+    console.log("Verifying OTP: ", otpField.otp);
     const account = await generateEmbeddedAccount();
+
+    const { email: email } = emailField!; // the component that can call this function only renders when the email exists
+    const { otp: otp } = otpField;
 
     try {
       const url = "http://localhost:3001/verify-otp";
@@ -56,8 +59,8 @@ const RegisterEmail = (): JSX.Element => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email?.email,
-          otp: otp.otp,
+          email,
+          otp,
           address: account,
         }),
       });
@@ -110,7 +113,10 @@ const RegisterEmail = (): JSX.Element => {
           </span>
         </p>
 
-        <Form schema={EmailSchema} onSubmit={(email) => registerEmail(email)}>
+        <Form
+          schema={EmailFieldSchema}
+          onSubmit={(email) => registerEmail(email)}
+        >
           <FormSection
             description="Please register with your 'pse.dev' email."
             title="Register"
@@ -118,7 +124,7 @@ const RegisterEmail = (): JSX.Element => {
             <FormControl
               required
               hint="This is your 'pse.dev' email address"
-              label="Email address"
+              label="EmailField address"
               name="email"
             >
               <Input placeholder="bob@pse.dev" />
@@ -133,8 +139,8 @@ const RegisterEmail = (): JSX.Element => {
             </Button>
           </FormSection>
         </Form>
-        {email && (
-          <Form schema={OtpSchema} onSubmit={(otp) => verifyOtp(otp)}>
+        {emailField && (
+          <Form schema={OtpFieldSchema} onSubmit={(otp) => verifyOtp(otp)}>
             <FormSection
               description="Please enter the one-time-password (OTP) you recieved in your email"
               title="Enter OTP"

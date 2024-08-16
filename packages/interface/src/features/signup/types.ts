@@ -6,14 +6,14 @@ export interface FAQItemProps {
   description: ReactNode;
 }
 
-export const EmailSchema = z.object({
-  email: z.string().email()
+export const EmailFieldSchema = z.object({
+  email: z.string().email(),
 });
 
-export type Email = z.infer<typeof EmailSchema>;
+export type EmailField = z.infer<typeof EmailFieldSchema>;
 
-export const OtpSchema = z.object({
-  otp: z.number()
+export const OtpFieldSchema = z.object({
+  otp: z.number(),
 });
 
-export type OTP = z.infer<typeof OtpSchema>;
+export type OtpField = z.infer<typeof OtpFieldSchema>;
