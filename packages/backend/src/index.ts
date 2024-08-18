@@ -1,7 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { isAddress } from "ethers"
-import cors from "cors"
+import { isAddress } from 'ethers'
+import cors from 'cors'
 
 import { sendOtp, verifyOtp } from './otp'
 import { getDb, initDb } from './db'
@@ -14,9 +14,9 @@ const port = 3001
 
 // todo: update origin to the frontend domain
 app.use(cors({
-    allowedHeaders: "*",
-    origin: "*",
-    methods: "POST"
+    allowedHeaders: '*',
+    origin: '*',
+    methods: 'POST'
 }))
 app.use(bodyParser.json())
 
@@ -39,9 +39,9 @@ app.post('/send-otp', async (req, res) => {
 
     try {
         await sendOtp(email)
-        res.status(200).json({ message: 'OTP sent successfully' })
+        return res.status(200).json({ message: 'OTP sent successfully' })
     } catch (error) {
-        res.status(500).json({ message: 'Failed to send OTP', error })
+        return res.status(500).json({ message: 'Failed to send OTP', error })
     }
 })
 
@@ -71,36 +71,39 @@ app.post('/verify-otp', async (req, res) => {
 
     // check otp
     const isValid = await verifyOtp(email, otp)
-    if (isValid) {
-        const db = await getDb();
+    if (!isValid) {
+        return res.status(400).json({ message: 'Invalid or expired OTP' })
+    }
 
-        try {
-            // mint the hat
-            const mintRes = await hatsClient.mintHat({
-                account,
-                hatId: BigInt(HAT_ID),
-                wearer: address as `0x${string}`,
-            })
+    try {
+        // mint the hat
+        const mintRes = await hatsClient.mintHat({
+            account,
+            hatId: BigInt(HAT_ID),
+            wearer: address as `0x${string}`,
+        })
 
-            // we want to throw an error if the minting failed
-            if (!mintRes.status) {
-                throw new Error('Failed to mint hat')
-            }
-
-            // store the address in the db and give hat 
-            const stmt = await db.prepare('INSERT INTO accounts (email, address) VALUES (?, ?)')
-            await stmt.run(email, address)
-            await stmt.finalize()
-
-            // return success
-            res.status(200).json({ message: 'OTP verified successfully' })
-        } catch (error) {
-            res.status(500).json({ message: 'Could not store account', error })
-        } finally {
-            await db.close()
+        // we want to throw an error if the minting failed
+        if (!mintRes.status) {
+            throw new Error('Transaction to mint hat reverted')
         }
-    } else {
-        res.status(400).json({ message: 'Invalid or expired OTP' })
+    } catch (error) {
+        return res.status(500).json({ message: 'Failed to mint hat' })
+    }
+
+    const db = await getDb()
+    try {
+        // store the address in the db and give hat 
+        const stmt = await db.prepare('INSERT INTO accounts (email, address) VALUES (?, ?)')
+        await stmt.run(email, address)
+        await stmt.finalize()
+
+        // return success
+        return res.status(200).json({ message: 'OTP verified successfully' })
+    } catch (error) {
+        return res.status(500).json({ message: 'Could not store account', error })
+    } finally {
+        await db.close()
     }
 })
 

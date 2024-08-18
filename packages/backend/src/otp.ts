@@ -1,9 +1,9 @@
 import nodemailer from 'nodemailer'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import dotenv from "dotenv" 
 import { randomInt } from 'crypto'
 
 import { getDb } from './db'
-import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 dotenv.config()
 
