@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { optimismSepolia } from "viem/chains";
-import { http } from "viem";
+import {
+  Chain,
+  encodeAbiParameters,
+  http,
+  parseAbiParameters,
+  Transport,
+} from "viem";
 import { generatePrivateKey } from "viem/accounts";
 import { privateKeyToAccount } from "viem/accounts";
 import {
@@ -14,12 +20,16 @@ import {
   pimlicoBundlerClient,
   publicClient,
 } from "~/utils/permissionless";
-import { signerToEcdsaKernelSmartAccount } from "permissionless/accounts";
-import { HATS_ABI } from "@hatsprotocol/sdk-v1-core";
+import {
+  KernelEcdsaSmartAccount,
+  signerToEcdsaKernelSmartAccount,
+} from "permissionless/accounts";
+import { Identity } from "@semaphore-protocol/core";
+import { genKeyPair } from "maci-cli/sdk";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Heading } from "~/components/ui/Heading";
-import { config, hats, getPimlicoRPCURL } from "~/config";
+import { config, semaphore, getPimlicoRPCURL } from "~/config";
 import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { Form, FormControl, FormSection } from "~/components/ui/Form";
@@ -31,6 +41,7 @@ import {
   OtpField,
 } from "../../features/signup/types";
 import { Button } from "~/components/ui/Button";
+import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
 
 const RegisterEmail = (): JSX.Element => {
   const [emailField, setEmail] = useState<EmailField>();
@@ -84,32 +95,42 @@ const RegisterEmail = (): JSX.Element => {
         console.log(response.status);
         console.log(await response.json());
       } else {
-        // TODO: (merge-ok) sending tx here to test paymaster and smart account deployment. Remove later
-        const hatId =
-          "53920304710440609890844568916334900684900534529047553357173057650688";
+        // // TODO: (merge-ok) sending tx here to test paymaster and smart account deployment. Remove later
 
-        const smartAccountClient = createSmartAccountClient({
-          account,
-          chain: optimismSepolia,
-          bundlerTransport: http(getPimlicoRPCURL()),
-          middleware: {
-            sponsorUserOperation: paymasterClient.sponsorUserOperation,
-            gasPrice: async () =>
-              (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
-          },
-        });
+        // const smartAccountClient = createSmartAccountClient({
+        //   account,
+        //   chain: optimismSepolia,
+        //   bundlerTransport: http(getPimlicoRPCURL()),
+        //   middleware: {
+        //     sponsorUserOperation: paymasterClient.sponsorUserOperation,
+        //     gasPrice: async () =>
+        //       (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
+        //   },
+        // });
 
-        const { request } = await publicClient.simulateContract({
-          address: hats.contracts.hats,
-          abi: HATS_ABI,
-          functionName: "renounceHat",
-          args: [hatId],
-          account,
-        });
-        const txHash = await smartAccountClient.writeContract(request);
-        console.log("txHash", txHash);
+        // const wagmiAbi = [
+        //   {
+        //     name: "mint",
+        //     type: "function",
+        //     stateMutability: "nonpayable",
+        //     inputs: [
+        //       { internalType: "uint32", name: "tokenId", type: "uint32" },
+        //     ],
+        //     outputs: [],
+        //   },
+        // ] as const;
 
-        await joinSemaporeGroup(account.address);
+        // const { request } = await publicClient.simulateContract({
+        //   address: "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+        //   abi: wagmiAbi,
+        //   functionName: "mint",
+        //   args: [123],
+        //   account,
+        // });
+        // const txHash = await smartAccountClient.writeContract(request);
+        // console.log("txHash", txHash);
+
+        await joinSemaporeGroup(account);
 
         // update state so that other options now show on signup page?
         router.push("/signup");
@@ -134,8 +155,51 @@ const RegisterEmail = (): JSX.Element => {
     return kernelAccount;
   };
 
-  const joinSemaporeGroup = async (account: string) => {
+  const joinSemaporeGroup = async (
+    account: KernelEcdsaSmartAccount<
+      typeof ENTRYPOINT_ADDRESS_V07,
+      Transport,
+      Chain
+    >
+  ) => {
     console.log("Joining Semaphore group with account ", account);
+    const signatureMessage = `Generate your EdDSA Key Pair at ${window.location.origin}`;
+    const signature = await account.signMessage({ message: signatureMessage });
+
+    const newSemaphoreIdentity = new Identity(signature);
+    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
+    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
+    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
+    localStorage.setItem(
+      "semaphoreIdentity",
+      newSemaphoreIdentity.privateKey.toString()
+    );
+
+    const identityCommitment = newSemaphoreIdentity.commitment;
+    const data = encodeAbiParameters(parseAbiParameters("uint"), [
+      semaphore.hatId,
+    ]);
+    console.log("IDENTITY COMMITMENT", identityCommitment);
+    console.log("DATA", data);
+    const { request } = await publicClient.simulateContract({
+      address: semaphore.contracts.semaphore,
+      abi: SemaphoreAbi.abi,
+      functionName: "gateAndAddMember",
+      args: [identityCommitment, data],
+      account,
+    });
+    const smartAccountClient = createSmartAccountClient({
+      account,
+      chain: optimismSepolia,
+      bundlerTransport: http(getPimlicoRPCURL()),
+      middleware: {
+        sponsorUserOperation: paymasterClient.sponsorUserOperation,
+        gasPrice: async () =>
+          (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
+      },
+    });
+    const txHash = await smartAccountClient.writeContract(request);
+    console.log("txHash", txHash);
   };
 
   return (
