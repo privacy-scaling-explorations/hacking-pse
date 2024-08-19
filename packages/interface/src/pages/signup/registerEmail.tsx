@@ -1,10 +1,25 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
+import { optimismSepolia } from "viem/chains";
+import { http } from "viem";
+import { generatePrivateKey } from "viem/accounts";
+import { privateKeyToAccount } from "viem/accounts";
+import {
+  createSmartAccountClient,
+  ENTRYPOINT_ADDRESS_V07,
+} from "permissionless";
+import {
+  paymasterClient,
+  pimlicoBundlerClient,
+  publicClient,
+} from "~/utils/permissionless";
+import { signerToEcdsaKernelSmartAccount } from "permissionless/accounts";
+import { HATS_ABI } from "@hatsprotocol/sdk-v1-core";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Heading } from "~/components/ui/Heading";
-import { config } from "~/config";
+import { config, hats, getPimlicoRPCURL } from "~/config";
 import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { Form, FormControl, FormSection } from "~/components/ui/Form";
@@ -61,7 +76,7 @@ const RegisterEmail = (): JSX.Element => {
         body: JSON.stringify({
           email,
           otp,
-          address: account,
+          address: account.address,
         }),
       });
 
@@ -69,7 +84,32 @@ const RegisterEmail = (): JSX.Element => {
         console.log(response.status);
         console.log(await response.json());
       } else {
-        await joinSemaporeGroup(account);
+        // TODO: (merge-ok) sending tx here to test paymaster and smart account deployment. Remove later
+        const hatId =
+          "53920304710440609890844568916334900684900534529047553357173057650688";
+
+        const smartAccountClient = createSmartAccountClient({
+          account,
+          chain: optimismSepolia,
+          bundlerTransport: http(getPimlicoRPCURL()),
+          middleware: {
+            sponsorUserOperation: paymasterClient.sponsorUserOperation,
+            gasPrice: async () =>
+              (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
+          },
+        });
+
+        const { request } = await publicClient.simulateContract({
+          address: hats.contracts.hats,
+          abi: HATS_ABI,
+          functionName: "renounceHat",
+          args: [hatId],
+          account,
+        });
+        const txHash = await smartAccountClient.writeContract(request);
+        console.log("txHash", txHash);
+
+        await joinSemaporeGroup(account.address);
 
         // update state so that other options now show on signup page?
         router.push("/signup");
@@ -81,7 +121,14 @@ const RegisterEmail = (): JSX.Element => {
 
   const generateEmbeddedAccount = async () => {
     console.log("Generating new account");
-    return "0x91AdDB0E8443C83bAf2aDa6B8157B38f814F0bcC"; // TODO: (merge-ok) hardcoded address will be swapped for generated account address in next PR
+    const privateKey = generatePrivateKey();
+    const signer = privateKeyToAccount(privateKey);
+    const kernelAccount = await signerToEcdsaKernelSmartAccount(publicClient, {
+      entryPoint: ENTRYPOINT_ADDRESS_V07,
+      signer,
+      index: 0n,
+    });
+    return kernelAccount;
   };
 
   const joinSemaporeGroup = async (account: string) => {
