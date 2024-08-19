@@ -42,6 +42,11 @@ const easSchemaRegistryContractAddresses = {
   base: "0x4200000000000000000000000000000000000020",
 };
 
+// Hats contract addresses for each chain
+const hatsContractAddresses = {
+  optimismSepolia: "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137",
+};
+
 /**
  * Convert the chain name for the semaphore ethers library
  * @returns the chain name for the semaphore ethers library
@@ -63,6 +68,19 @@ export const getRPCURL = (): string | undefined => {
   switch (process.env.NEXT_PUBLIC_CHAIN_NAME) {
     case "optimismSepolia":
       return `https://opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID!}`;
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * Get the PIMLICO RPC URL based on the network we are connected to
+ * @returns the PIMLICO RPC URL
+ */
+export const getPimlicoRPCURL = (): string | undefined => {
+  switch (process.env.NEXT_PUBLIC_CHAIN_NAME) {
+    case "optimismSepolia":
+      return `https://api.pimlico.io/v2/optimism-sepolia/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`;
     default:
       return undefined;
   }
@@ -110,6 +128,14 @@ export const eas = {
   schemas: {
     metadata: process.env.NEXT_PUBLIC_METADATA_SCHEMA!,
     approval: process.env.NEXT_PUBLIC_APPROVAL_SCHEMA!,
+  },
+};
+
+export const hats = {
+  contracts: {
+    hats: hatsContractAddresses[
+      process.env.NEXT_PUBLIC_CHAIN_NAME as keyof typeof hatsContractAddresses
+    ],
   },
 };
 
