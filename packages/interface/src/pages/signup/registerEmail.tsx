@@ -128,6 +128,9 @@ const RegisterEmail = (): JSX.Element => {
       signer,
       index: 0n,
     });
+
+    localStorage.setItem("ecdsaPrivKey", privateKey);
+    localStorage.setItem("accountAddress", kernelAccount.address);
     return kernelAccount;
   };
 
