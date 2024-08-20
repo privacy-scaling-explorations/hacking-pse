@@ -9,7 +9,7 @@ import { getDb, initDb } from './db'
 import { hatsClient } from './hats'
 import { HAT_ID, SEMAPHORE_ADDRESS } from './constants'
 import { account, publicClient, walletClient } from './account'
-import { VerifyOtpSchema } from './types';
+import { SendOtpSchema, VerifyOtpSchema } from './types';
 
 const app = express()
 const port = 3001
@@ -29,15 +29,17 @@ app.use(bodyParser.json())
  * @returns a message indicating the OTP was sent successfully
  */
 app.post('/send-otp', async (req, res) => {
-    const { email } = req.body
-    if (!email) {
-        return res.status(400).json({ message: 'Email is required' })
+    const result = SendOtpSchema.safeParse(req.body);
+    if (!result.success) {
+        const errors = result.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        return res
+            .status(400)
+            .json({
+                message: "Validation error(s)",
+                errors
+            });
     }
-
-    // check email is from pse.dev
-    if (!email.endsWith('@pse.dev')) {
-        return res.status(400).json({ message: 'Invalid email domain' })
-    }
+    const { email } = result.data;
 
     try {
         await sendOtp(email)
