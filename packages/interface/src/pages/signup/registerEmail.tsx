@@ -77,6 +77,20 @@ const RegisterEmail = (): JSX.Element => {
     const { email: email } = emailField!; // the component that can call this function only renders when the email exists
     const { otp: otp } = otpField;
 
+    const signatureMessage = `Generate your EdDSA Key Pair at ${window.location.origin}`;
+    const signature = await account.signMessage({ message: signatureMessage });
+
+    const newSemaphoreIdentity = new Identity(signature);
+    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
+    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
+    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
+    localStorage.setItem(
+      "semaphoreIdentity",
+      newSemaphoreIdentity.privateKey.toString()
+    );
+
+    const identityCommitment = newSemaphoreIdentity.commitment;
+
     try {
       const url = "http://localhost:3001/verify-otp";
       const response = await fetch(url, {
@@ -88,6 +102,7 @@ const RegisterEmail = (): JSX.Element => {
           email,
           otp,
           address: account.address,
+          identityCommitment: identityCommitment.toString(),
         }),
       });
 
@@ -130,8 +145,6 @@ const RegisterEmail = (): JSX.Element => {
         // const txHash = await smartAccountClient.writeContract(request);
         // console.log("txHash", txHash);
 
-        await joinSemaporeGroup(account);
-
         // update state so that other options now show on signup page?
         router.push("/signup");
       }
@@ -153,53 +166,6 @@ const RegisterEmail = (): JSX.Element => {
     localStorage.setItem("ecdsaPrivKey", privateKey);
     localStorage.setItem("accountAddress", kernelAccount.address);
     return kernelAccount;
-  };
-
-  const joinSemaporeGroup = async (
-    account: KernelEcdsaSmartAccount<
-      typeof ENTRYPOINT_ADDRESS_V07,
-      Transport,
-      Chain
-    >
-  ) => {
-    console.log("Joining Semaphore group with account ", account);
-    const signatureMessage = `Generate your EdDSA Key Pair at ${window.location.origin}`;
-    const signature = await account.signMessage({ message: signatureMessage });
-
-    const newSemaphoreIdentity = new Identity(signature);
-    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
-    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
-    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
-    localStorage.setItem(
-      "semaphoreIdentity",
-      newSemaphoreIdentity.privateKey.toString()
-    );
-
-    const identityCommitment = newSemaphoreIdentity.commitment;
-    const data = encodeAbiParameters(parseAbiParameters("uint"), [
-      semaphore.hatId,
-    ]);
-    console.log("IDENTITY COMMITMENT", identityCommitment);
-    console.log("DATA", data);
-    const { request } = await publicClient.simulateContract({
-      address: semaphore.contracts.semaphore,
-      abi: SemaphoreAbi.abi,
-      functionName: "gateAndAddMember",
-      args: [identityCommitment, data],
-      account,
-    });
-    const smartAccountClient = createSmartAccountClient({
-      account,
-      chain: optimismSepolia,
-      bundlerTransport: http(getPimlicoRPCURL()),
-      middleware: {
-        sponsorUserOperation: paymasterClient.sponsorUserOperation,
-        gasPrice: async () =>
-          (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
-      },
-    });
-    const txHash = await smartAccountClient.writeContract(request);
-    console.log("txHash", txHash);
   };
 
   return (
