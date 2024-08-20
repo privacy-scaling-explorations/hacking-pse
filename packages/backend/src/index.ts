@@ -1,13 +1,15 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { isAddress } from 'ethers'
 import cors from 'cors'
+import { encodeAbiParameters, parseAbiParameters } from 'viem'
+import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
 
 import { sendOtp, verifyOtp } from './otp'
 import { getDb, initDb } from './db'
 import { hatsClient } from './hats'
-import { HAT_ID } from './constants'
-import { account } from './account'
+import { HAT_ID, SEMAPHORE_ADDRESS } from './constants'
+import { account, publicClient, walletClient } from './account'
+import { VerifyOtpSchema } from './types';
 
 const app = express()
 const port = 3001
@@ -54,20 +56,18 @@ app.post('/send-otp', async (req, res) => {
  * @returns a message indicating the OTP was verified successfully
  */
 app.post('/verify-otp', async (req, res) => {
-    const { email, otp, address } = req.body
-    if (!email || !otp || !address) {
-        return res.status(400).json({ message: 'Email, OTP and address are required' })
+    const result = VerifyOtpSchema.safeParse(req.body);
+    if (!result.success) {
+        const errors = result.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        return res
+            .status(400)
+            .json({
+                message: "Validation error(s)",
+                errors
+            });
     }
 
-    // check address
-    if (!isAddress(address)) {
-        return res.status(400).json({ message: 'Invalid address' })
-    }
-
-    // check email 
-    if (!email.endsWith('@pse.dev')) {
-        return res.status(400).json({ message: 'Invalid email domain' })
-    }
+    const { email, otp, address, identityCommitment } = result.data;
 
     // check otp
     const isValid = await verifyOtp(email, otp)
@@ -89,6 +89,23 @@ app.post('/verify-otp', async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({ message: 'Failed to mint hat' })
+    }
+
+    const data = encodeAbiParameters(parseAbiParameters("uint"), [
+        BigInt(HAT_ID),
+    ]);
+
+    try {
+        const { request } = await publicClient.simulateContract({
+            account,
+            address: SEMAPHORE_ADDRESS,
+            abi: SemaphoreAbi.abi,
+            functionName: "gateAndAddMember",
+            args: [identityCommitment, data],
+        });
+        await walletClient.writeContract(request);
+    } catch (error) {
+        return res.status(500).json({ message: 'Failed to add account to Semaphore group' })
     }
 
     const db = await getDb()

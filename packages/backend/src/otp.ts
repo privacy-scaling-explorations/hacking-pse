@@ -65,7 +65,7 @@ export const sendOtp = async (email: string): Promise<SMTPTransport.SentMessageI
  * @param otp - the OTP to verify
  * @returns a boolean indicating whether the OTP was verified successfully
  */
-export const verifyOtp = async (email: string, otp: string): Promise<boolean> => {
+export const verifyOtp = async (email: string, otp: number): Promise<boolean> => {
   const db = await getDb()
 
   try {

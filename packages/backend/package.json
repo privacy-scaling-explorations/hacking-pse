@@ -22,13 +22,14 @@
   "dependencies": {
     "@hatsprotocol/sdk-v1-core": "^0.10.0",
     "body-parser": "^1.20.2",
+    "contracts": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "ethers": "^6.13.2",
     "express": "^4.19.2",
     "nodemailer": "^6.9.14",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "viem": "^2.19.4"
+    "viem": "^2.19.4",
+    "zod": "3.22.4"
   }
 }
