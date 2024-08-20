@@ -30,6 +30,8 @@ contract Deploy is Script {
         Semaphore semaphore = new Semaphore(ISemaphoreVerifier(address(semaphoreVerifier)), hatsExcubia);
         console.log("Semaphore deployed to:", address(semaphore));
 
+        hatsExcubia.setGate(address(semaphore));
+
         vm.stopBroadcast();
     }
 }
