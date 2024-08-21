@@ -47,6 +47,11 @@ const hatsContractAddresses = {
   optimismSepolia: "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137",
 };
 
+// Hats contract addresses for each chain
+const semaphoreContractAddresses = {
+  optimismSepolia: "0x71B93f8b0583f4033FAA1EE47d448B572933cefe",
+};
+
 /**
  * Convert the chain name for the semaphore ethers library
  * @returns the chain name for the semaphore ethers library
@@ -137,6 +142,17 @@ export const hats = {
       process.env.NEXT_PUBLIC_CHAIN_NAME as keyof typeof hatsContractAddresses
     ],
   },
+};
+
+export const semaphore = {
+  contracts: {
+    semaphore:
+      semaphoreContractAddresses[
+        process.env
+          .NEXT_PUBLIC_CHAIN_NAME as keyof typeof semaphoreContractAddresses
+      ],
+  },
+  hatId: 53920304710440609890844568916334900684900534529047553357173057650688n,
 };
 
 export const impactCategories = {

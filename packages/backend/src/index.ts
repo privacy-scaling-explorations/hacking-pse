@@ -1,6 +1,5 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { isAddress } from 'ethers'
 import cors from 'cors'
 
 import { sendOtp, verifyOtp } from './otp'
@@ -8,6 +7,7 @@ import { getDb, initDb } from './db'
 import { hatsClient } from './hats'
 import { HAT_ID } from './constants'
 import { account } from './account'
+import { SendOtpSchema, VerifyOtpSchema } from './types';
 
 const app = express()
 const port = 3001
@@ -27,15 +27,17 @@ app.use(bodyParser.json())
  * @returns a message indicating the OTP was sent successfully
  */
 app.post('/send-otp', async (req, res) => {
-    const { email } = req.body
-    if (!email) {
-        return res.status(400).json({ message: 'Email is required' })
+    const result = SendOtpSchema.safeParse(req.body);
+    if (!result.success) {
+        const errors = result.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        return res
+            .status(400)
+            .json({
+                message: "Validation error(s)",
+                errors
+            });
     }
-
-    // check email is from pse.dev
-    if (!email.endsWith('@pse.dev')) {
-        return res.status(400).json({ message: 'Invalid email domain' })
-    }
+    const { email } = result.data;
 
     try {
         await sendOtp(email)
@@ -54,20 +56,18 @@ app.post('/send-otp', async (req, res) => {
  * @returns a message indicating the OTP was verified successfully
  */
 app.post('/verify-otp', async (req, res) => {
-    const { email, otp, address } = req.body
-    if (!email || !otp || !address) {
-        return res.status(400).json({ message: 'Email, OTP and address are required' })
+    const result = VerifyOtpSchema.safeParse(req.body);
+    if (!result.success) {
+        const errors = result.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
+        return res
+            .status(400)
+            .json({
+                message: "Validation error(s)",
+                errors
+            });
     }
 
-    // check address
-    if (!isAddress(address)) {
-        return res.status(400).json({ message: 'Invalid address' })
-    }
-
-    // check email 
-    if (!email.endsWith('@pse.dev')) {
-        return res.status(400).json({ message: 'Invalid email domain' })
-    }
+    const { email, otp, address } = result.data;
 
     // check otp
     const isValid = await verifyOtp(email, otp)

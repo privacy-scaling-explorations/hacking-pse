@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import Link from "next/link";
-import { useAccount } from "wagmi";
 
 import { ConnectButton } from "~/components/ConnectButton";
 import { EligibilityDialog } from "~/components/EligibilityDialog";
@@ -14,9 +13,10 @@ import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
+import { useAccount } from "~/hooks/useAccount";
 
 const SignupPage = (): JSX.Element => {
-  const { isConnected } = useAccount();
+  const accountExists = useAccount();
   const { isRegistered } = useMaci();
   const appState = useAppState();
 
@@ -45,25 +45,27 @@ const SignupPage = (): JSX.Element => {
           </span>
         </p>
 
-        <Button size="auto" variant="primary">
-          <Link href="/signup/registerEmail">Register</Link>
-        </Button>
+        {!accountExists && (
+          <Button size="auto" variant="primary">
+            <Link href="/signup/registerEmail">Register</Link>
+          </Button>
+        )}
 
         {/* {!isConnected && <ConnectButton />} */}
 
-        {isConnected && appState === EAppState.APPLICATION && (
+        {accountExists && appState === EAppState.APPLICATION && (
           <Button size="auto" variant="primary">
             <Link href="/applications/new">Start Application</Link>
           </Button>
         )}
 
-        {isConnected && isRegistered && appState === EAppState.VOTING && (
+        {accountExists && isRegistered && appState === EAppState.VOTING && (
           <Button size="auto" variant="primary">
             <Link href="/projects">View projects</Link>
           </Button>
         )}
 
-        {isConnected && !isRegistered && <JoinButton />}
+        {accountExists && !isRegistered && <JoinButton />}
 
         <div className="my-8">
           <Info size="default" />

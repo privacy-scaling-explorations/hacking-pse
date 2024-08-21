@@ -12,7 +12,7 @@ contract Deploy is Script {
     // @todo needs the correct HatsProtocol address.
     // See https://book.getfoundry.sh/tutorials/solidity-scripting for deploy.
     address public HATS_ADDRESS = address(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137);
-    uint256[] public CRITERION_HATS = [0, 1, 2];
+    uint256[] public CRITERION_HATS = [53920304710440609890844568916334900684900534529047553357173057650688];
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -29,6 +29,8 @@ contract Deploy is Script {
         // Deploy Semaphore
         Semaphore semaphore = new Semaphore(ISemaphoreVerifier(address(semaphoreVerifier)), hatsExcubia);
         console.log("Semaphore deployed to:", address(semaphore));
+
+        hatsExcubia.setGate(address(semaphore));
 
         vm.stopBroadcast();
     }

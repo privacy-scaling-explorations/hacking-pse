@@ -1,25 +1,39 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
-import { optimismSepolia } from "viem/chains";
-import { http } from "viem";
-import { generatePrivateKey } from "viem/accounts";
-import { privateKeyToAccount } from "viem/accounts";
 import {
-  createSmartAccountClient,
+  Address,
+  Chain,
+  encodeAbiParameters,
+  http,
+  HttpTransport,
+  parseAbiParameters,
+  Transport,
+} from "viem";
+import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
+import {
   ENTRYPOINT_ADDRESS_V07,
+  createSmartAccountClient,
 } from "permissionless";
 import {
   paymasterClient,
   pimlicoBundlerClient,
   publicClient,
 } from "~/utils/permissionless";
-import { signerToEcdsaKernelSmartAccount } from "permissionless/accounts";
-import { HATS_ABI } from "@hatsprotocol/sdk-v1-core";
+import {
+  KernelEcdsaSmartAccount,
+  signerToEcdsaKernelSmartAccount,
+  SmartAccount,
+} from "permissionless/accounts";
+import { sponsorUserOperation } from "permissionless/actions/pimlico";
+import { EntryPoint } from "permissionless/types";
+import { Identity } from "@semaphore-protocol/core";
+import { genKeyPair } from "maci-cli/sdk";
+import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Heading } from "~/components/ui/Heading";
-import { config, hats, getPimlicoRPCURL } from "~/config";
+import { config, getPimlicoRPCURL, semaphore } from "~/config";
 import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { Form, FormControl, FormSection } from "~/components/ui/Form";
@@ -84,34 +98,7 @@ const RegisterEmail = (): JSX.Element => {
         console.log(response.status);
         console.log(await response.json());
       } else {
-        // TODO: (merge-ok) sending tx here to test paymaster and smart account deployment. Remove later
-        const hatId =
-          "53920304710440609890844568916334900684900534529047553357173057650688";
-
-        const smartAccountClient = createSmartAccountClient({
-          account,
-          chain: optimismSepolia,
-          bundlerTransport: http(getPimlicoRPCURL()),
-          middleware: {
-            sponsorUserOperation: paymasterClient.sponsorUserOperation,
-            gasPrice: async () =>
-              (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
-          },
-        });
-
-        const { request } = await publicClient.simulateContract({
-          address: hats.contracts.hats,
-          abi: HATS_ABI,
-          functionName: "renounceHat",
-          args: [hatId],
-          account,
-        });
-        const txHash = await smartAccountClient.writeContract(request);
-        console.log("txHash", txHash);
-
-        await joinSemaporeGroup(account.address);
-
-        // update state so that other options now show on signup page?
+        await joinSemaphoreGroup(account);
         router.push("/signup");
       }
     } catch (error: any) {
@@ -134,8 +121,47 @@ const RegisterEmail = (): JSX.Element => {
     return kernelAccount;
   };
 
-  const joinSemaporeGroup = async (account: string) => {
-    console.log("Joining Semaphore group with account ", account);
+  const joinSemaphoreGroup = async (
+    account: KernelEcdsaSmartAccount<EntryPoint, HttpTransport, Chain>
+  ) => {
+    console.log("Joining Semaphore group");
+    const smartAccountClient = createSmartAccountClient({
+      account,
+      entryPoint: ENTRYPOINT_ADDRESS_V07,
+      chain: config.network,
+      bundlerTransport: http(getPimlicoRPCURL()),
+      middleware: {
+        sponsorUserOperation: paymasterClient.sponsorUserOperation,
+        gasPrice: async () =>
+          (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
+      },
+    });
+    const signatureMessage = `Generate your EdDSA Key Pair at ${window.location.origin}`;
+    const signature = await account.signMessage({ message: signatureMessage });
+
+    const newSemaphoreIdentity = new Identity(signature);
+    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
+    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
+    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
+    localStorage.setItem(
+      "semaphoreIdentity",
+      newSemaphoreIdentity.privateKey.toString()
+    );
+
+    const identityCommitment = newSemaphoreIdentity.commitment;
+    const data = encodeAbiParameters(parseAbiParameters("uint"), [
+      semaphore.hatId,
+    ]);
+
+    const { request } = await publicClient.simulateContract({
+      account,
+      address: semaphore.contracts.semaphore as Address,
+      abi: SemaphoreAbi.abi,
+      functionName: "gateAndAddMember",
+      args: [identityCommitment, data],
+    });
+    const txHash = await smartAccountClient.writeContract(request);
+    console.log("txHash", txHash);
   };
 
   return (
