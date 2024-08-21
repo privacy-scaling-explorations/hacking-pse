@@ -5,12 +5,14 @@ import { ISemaphore } from "@semaphore-protocol/contracts/interfaces/ISemaphore.
 import { ISemaphoreVerifier } from "@semaphore-protocol/contracts/interfaces/ISemaphoreVerifier.sol";
 import { SemaphoreGroups } from "@semaphore-protocol/contracts/base/SemaphoreGroups.sol";
 import { MIN_DEPTH, MAX_DEPTH } from "@semaphore-protocol/contracts/base/Constants.sol";
-import { HatsExcubia } from "@zk-kit/excubiae/extensions/HatsExcubia.sol";
+import { IExcubia } from "@zk-kit/excubiae/IExcubia.sol";
+import {InternalLeanIMT, LeanIMTData} from "@zk-kit/lean-imt.sol/InternalLeanIMT.sol";
 
 /// @title Semaphore
 /// @dev A minimal version of the Semaphore contract.
 contract Semaphore is ISemaphore, SemaphoreGroups {
-    HatsExcubia public hatsExcubia;
+    using InternalLeanIMT for LeanIMTData;
+    IExcubia public hatsExcubia;
     ISemaphoreVerifier public verifier;
 
     uint256 public groupId = 1;
@@ -20,7 +22,7 @@ contract Semaphore is ISemaphore, SemaphoreGroups {
     /// @dev Creates the group and initializes the Semaphore verifier and gatekeeper.
     /// @param _verifier: Semaphore verifier address.
     /// @param _hatsExcubia: Gatekeeper address.
-    constructor(ISemaphoreVerifier _verifier, HatsExcubia _hatsExcubia) {
+    constructor(ISemaphoreVerifier _verifier, IExcubia _hatsExcubia) {
         _createGroup(groupId, msg.sender);
 
         group.merkleTreeDuration = 1 hours;
@@ -46,10 +48,21 @@ contract Semaphore is ISemaphore, SemaphoreGroups {
         emit GroupMerkleTreeDurationUpdated(groupId, oldMerkleTreeDuration, newMerkleTreeDuration);
     }
 
+    /// @notice custom insert function to bypass semaphore onlyGroupAdmin modifier 
+    function _addMemberCustom(
+        uint256 identityCommitment
+    ) internal returns (uint256 merkleTreeRoot) {
+        uint256 index = getMerkleTreeSize(groupId);
+        
+        merkleTreeRoot = merkleTrees[groupId]._insert(identityCommitment);
+
+        emit MemberAdded(groupId, index, identityCommitment, merkleTreeRoot);
+    }
+
     function gateAndAddMember(uint256 identityCommitment, bytes calldata data) external {
         hatsExcubia.pass(msg.sender, data);
 
-        uint256 merkleTreeRoot = _addMember(groupId, identityCommitment);
+        uint256 merkleTreeRoot = _addMemberCustom(identityCommitment);
 
         group.merkleRootCreationDates[merkleTreeRoot] = block.timestamp;
     }
