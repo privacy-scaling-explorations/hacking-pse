@@ -13,7 +13,6 @@ export const VerifyOtpSchema = z.object({
   address: z.string().refine(isAddress, {
     message: "Invalid address",
   }),
-  identityCommitment: z.string().transform((val) => BigInt(val)),
 });
 
 export type VerifyOtp = z.infer<typeof VerifyOtpSchema>;

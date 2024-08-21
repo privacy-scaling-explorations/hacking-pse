@@ -1,14 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { encodeAbiParameters, parseAbiParameters } from 'viem'
-import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
 
 import { sendOtp, verifyOtp } from './otp'
 import { getDb, initDb } from './db'
 import { hatsClient } from './hats'
-import { HAT_ID, SEMAPHORE_ADDRESS } from './constants'
-import { account, publicClient, walletClient } from './account'
+import { HAT_ID } from './constants'
+import { account } from './account'
 import { SendOtpSchema, VerifyOtpSchema } from './types';
 
 const app = express()
@@ -69,7 +67,7 @@ app.post('/verify-otp', async (req, res) => {
             });
     }
 
-    const { email, otp, address, identityCommitment } = result.data;
+    const { email, otp, address } = result.data;
 
     // check otp
     const isValid = await verifyOtp(email, otp)
@@ -91,23 +89,6 @@ app.post('/verify-otp', async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({ message: 'Failed to mint hat' })
-    }
-
-    const data = encodeAbiParameters(parseAbiParameters("uint"), [
-        BigInt(HAT_ID),
-    ]);
-
-    try {
-        const { request } = await publicClient.simulateContract({
-            account,
-            address: SEMAPHORE_ADDRESS,
-            abi: SemaphoreAbi.abi,
-            functionName: "gateAndAddMember",
-            args: [identityCommitment, data],
-        });
-        await walletClient.writeContract(request);
-    } catch (error) {
-        return res.status(500).json({ message: 'Failed to add account to Semaphore group' })
     }
 
     const db = await getDb()

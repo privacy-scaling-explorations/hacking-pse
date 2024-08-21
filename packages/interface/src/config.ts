@@ -49,7 +49,7 @@ const hatsContractAddresses = {
 
 // Hats contract addresses for each chain
 const semaphoreContractAddresses = {
-  optimismSepolia: "0xde4e78078Ee62Bf0254b4C51d95fcE387c0fCe1d",
+  optimismSepolia: "0x71B93f8b0583f4033FAA1EE47d448B572933cefe",
 };
 
 /**
