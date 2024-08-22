@@ -13,6 +13,7 @@ import { EAppState } from "~/utils/types";
 import { ConnectButton } from "./ConnectButton";
 import { IconButton } from "./ui/Button";
 import { Logo } from "./ui/Logo";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 interface INavLinkProps extends ComponentPropsWithRef<typeof Link> {
   isActive: boolean;
@@ -60,6 +61,7 @@ const Header = ({ navLinks }: IHeaderProps) => {
   const { ballot } = useBallot();
   const appState = useAppState();
   const { theme, setTheme } = useTheme();
+  const { smartAccount } = useSmartAccount();
 
   const handleChangeTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -110,7 +112,8 @@ const Header = ({ navLinks }: IHeaderProps) => {
             onClick={handleChangeTheme}
           />
 
-          <ConnectButton />
+          {/* <ConnectButton /> */}
+          <p>{`Addr: ${smartAccount?.address ?? ""}`}</p>
         </div>
 
         <MobileMenu isOpen={isOpen} navLinks={navLinks} />

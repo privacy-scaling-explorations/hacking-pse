@@ -15,10 +15,10 @@ import {
   getHatsSingleGatekeeperData,
 } from "maci-cli/sdk";
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount, useSignMessage } from "wagmi";
 
 import { config } from "~/config";
 import { useEthersSigner } from "~/hooks/useEthersSigner";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { api } from "~/utils/api";
 import { getHatsClient } from "~/utils/hatsProtocol";
 import { getSemaphoreProof } from "~/utils/semaphore";
@@ -36,7 +36,7 @@ export const MaciContext = createContext<MaciContextType | undefined>(undefined)
  */
 export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProviderProps) => {
   const signer = useEthersSigner();
-  const { address, isConnected, isDisconnected } = useAccount();
+  const { address, smartAccount } = useSmartAccount();
 
   const [isRegistered, setIsRegistered] = useState<boolean>();
   const [stateIndex, setStateIndex] = useState<string>();
@@ -55,7 +55,6 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   const [gatekeeperTrait, setGatekeeperTrait] = useState<GatekeeperTrait | undefined>();
   const [sgData, setSgData] = useState<string | undefined>();
 
-  const { signMessageAsync } = useSignMessage();
   const user = api.maci.user.useQuery(
     { publicKey: maciPubKey ?? "" },
     { enabled: Boolean(maciPubKey && config.maciSubgraphUrl) },
@@ -188,21 +187,26 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
 
   // generate the maci keypair using a ECDSA signature
   const generateKeypair = useCallback(async () => {
-    // if we are not connected then do not generate the key pair
-    if (!address) {
+    if (!smartAccount) {
       return;
     }
 
-    const signature = await signMessageAsync({ message: signatureMessage });
-    const newSemaphoreIdentity = new Identity(signature);
-    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
-    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
-    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
-    localStorage.setItem("semaphoreIdentity", newSemaphoreIdentity.privateKey.toString());
-    setMaciPrivKey(userKeyPair.privateKey);
-    setMaciPubKey(userKeyPair.publicKey);
-    setSemaphoreIdentity(newSemaphoreIdentity);
-  }, [address, signatureMessage, signMessageAsync, setMaciPrivKey, setMaciPubKey, setSemaphoreIdentity]);
+    const maciPrivKey = localStorage.getItem("maciPrivKey");
+    const maciPubKey = localStorage.getItem("maciPubKey");
+    const semaphoreIdentity = localStorage.getItem("semaphoreIdentity");
+
+    if (!maciPrivKey || !maciPubKey || !semaphoreIdentity) {
+      const signature = await smartAccount.signMessage({ message: signatureMessage });
+      const newSemaphoreIdentity = new Identity(signature);
+      const userKeyPair = genKeyPair({ seed: BigInt(signature) });
+      localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
+      localStorage.setItem("maciPubKey", userKeyPair.publicKey);
+      localStorage.setItem("semaphoreIdentity", newSemaphoreIdentity.privateKey.toString());
+      setMaciPrivKey(userKeyPair.privateKey);
+      setMaciPubKey(userKeyPair.publicKey);
+      setSemaphoreIdentity(newSemaphoreIdentity);
+    }
+  }, [smartAccount, signatureMessage, setMaciPrivKey, setMaciPubKey, setSemaphoreIdentity]);
 
   // memo to calculate the voting end date
   const votingEndsAt = useMemo(
@@ -285,17 +289,6 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   );
 
   useEffect(() => {
-    if (isDisconnected) {
-      setMaciPrivKey(undefined);
-      setMaciPubKey(undefined);
-      setSemaphoreIdentity(undefined);
-      localStorage.removeItem("maciPrivKey");
-      localStorage.removeItem("maciPubKey");
-      localStorage.removeItem("semaphoreIdentity");
-    }
-  }, [isDisconnected]);
-
-  useEffect(() => {
     generateKeypair().catch(console.error);
   }, [generateKeypair]);
 
@@ -308,8 +301,9 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   }, [maciPubKey, user]);
 
   // check if the user already registered
+  // TODO: add useSmartAccount values?
   useEffect(() => {
-    if (!isConnected || !signer || !maciPubKey || !address || isLoading) {
+    if (!signer || !maciPubKey || !address || isLoading) {
       return;
     }
 
@@ -337,7 +331,6 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
     }
   }, [
     isLoading,
-    isConnected,
     isRegistered,
     maciPubKey,
     address,

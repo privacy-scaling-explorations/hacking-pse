@@ -1,39 +1,14 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
-import {
-  Address,
-  Chain,
-  encodeAbiParameters,
-  http,
-  HttpTransport,
-  parseAbiParameters,
-  Transport,
-} from "viem";
-import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
-import {
-  ENTRYPOINT_ADDRESS_V07,
-  createSmartAccountClient,
-} from "permissionless";
-import {
-  paymasterClient,
-  pimlicoBundlerClient,
-  publicClient,
-} from "~/utils/permissionless";
-import {
-  KernelEcdsaSmartAccount,
-  signerToEcdsaKernelSmartAccount,
-  SmartAccount,
-} from "permissionless/accounts";
-import { sponsorUserOperation } from "permissionless/actions/pimlico";
-import { EntryPoint } from "permissionless/types";
+import { Address, encodeAbiParameters, parseAbiParameters } from "viem";
+import { publicClient } from "~/utils/permissionless";
 import { Identity } from "@semaphore-protocol/core";
-import { genKeyPair } from "maci-cli/sdk";
 import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Heading } from "~/components/ui/Heading";
-import { config, getPimlicoRPCURL, semaphore } from "~/config";
+import { config, semaphore } from "~/config";
 import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { Form, FormControl, FormSection } from "~/components/ui/Form";
@@ -45,10 +20,12 @@ import {
   OtpField,
 } from "../../features/signup/types";
 import { Button } from "~/components/ui/Button";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 const RegisterEmail = (): JSX.Element => {
-  const [emailField, setEmail] = useState<EmailField>();
+  const { address, smartAccount, smartAccountClient } = useSmartAccount();
   const router = useRouter();
+  const [emailField, setEmail] = useState<EmailField>();
 
   const registerEmail = async (emailField: EmailField) => {
     const url = "http://localhost:3001/send-otp";
@@ -75,7 +52,9 @@ const RegisterEmail = (): JSX.Element => {
 
   const verifyOtp = async (otpField: OtpField) => {
     console.log("Verifying OTP: ", otpField.otp);
-    const account = await generateEmbeddedAccount();
+    if (!address) {
+      throw new Error("Smart account does not exist");
+    }
 
     const { email: email } = emailField!; // the component that can call this function only renders when the email exists
     const { otp: otp } = otpField;
@@ -90,7 +69,7 @@ const RegisterEmail = (): JSX.Element => {
         body: JSON.stringify({
           email,
           otp,
-          address: account.address,
+          address,
         }),
       });
 
@@ -98,7 +77,7 @@ const RegisterEmail = (): JSX.Element => {
         console.log(response.status);
         console.log(await response.json());
       } else {
-        await joinSemaphoreGroup(account);
+        await joinSemaphoreGroup();
         router.push("/signup");
       }
     } catch (error: any) {
@@ -106,55 +85,25 @@ const RegisterEmail = (): JSX.Element => {
     }
   };
 
-  const generateEmbeddedAccount = async () => {
-    console.log("Generating new account");
-    const privateKey = generatePrivateKey();
-    const signer = privateKeyToAccount(privateKey);
-    const kernelAccount = await signerToEcdsaKernelSmartAccount(publicClient, {
-      entryPoint: ENTRYPOINT_ADDRESS_V07,
-      signer,
-      index: 0n,
-    });
-
-    localStorage.setItem("ecdsaPrivKey", privateKey);
-    localStorage.setItem("accountAddress", kernelAccount.address);
-    return kernelAccount;
-  };
-
-  const joinSemaphoreGroup = async (
-    account: KernelEcdsaSmartAccount<EntryPoint, HttpTransport, Chain>
-  ) => {
+  const joinSemaphoreGroup = async () => {
     console.log("Joining Semaphore group");
-    const smartAccountClient = createSmartAccountClient({
-      account,
-      entryPoint: ENTRYPOINT_ADDRESS_V07,
-      chain: config.network,
-      bundlerTransport: http(getPimlicoRPCURL()),
-      middleware: {
-        sponsorUserOperation: paymasterClient.sponsorUserOperation,
-        gasPrice: async () =>
-          (await pimlicoBundlerClient.getUserOperationGasPrice()).fast,
-      },
-    });
-    const signatureMessage = `Generate your EdDSA Key Pair at ${window.location.origin}`;
-    const signature = await account.signMessage({ message: signatureMessage });
 
-    const newSemaphoreIdentity = new Identity(signature);
-    const userKeyPair = genKeyPair({ seed: BigInt(signature) });
-    localStorage.setItem("maciPrivKey", userKeyPair.privateKey);
-    localStorage.setItem("maciPubKey", userKeyPair.publicKey);
-    localStorage.setItem(
-      "semaphoreIdentity",
-      newSemaphoreIdentity.privateKey.toString()
-    );
+    if (!smartAccount || !smartAccountClient) {
+      throw new Error("Smart account does not exist");
+    }
 
-    const identityCommitment = newSemaphoreIdentity.commitment;
+    const semaphoreIdentity = localStorage.getItem("semaphoreIdentity");
+    if (!semaphoreIdentity) {
+      throw new Error("No Semaphore Identity");
+    }
+
+    const identityCommitment = new Identity(semaphoreIdentity).commitment;
     const data = encodeAbiParameters(parseAbiParameters("uint"), [
       semaphore.hatId,
     ]);
 
     const { request } = await publicClient.simulateContract({
-      account,
+      account: smartAccount,
       address: semaphore.contracts.semaphore as Address,
       abi: SemaphoreAbi.abi,
       functionName: "gateAndAddMember",

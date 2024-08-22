@@ -13,10 +13,8 @@ import { FAQList } from "~/features/signup/components/FaqList";
 import { Layout } from "~/layouts/DefaultLayout";
 import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
-import { useAccount } from "~/hooks/useAccount";
 
 const SignupPage = (): JSX.Element => {
-  const accountExists = useAccount();
   const { isRegistered } = useMaci();
   const appState = useAppState();
 
@@ -45,7 +43,7 @@ const SignupPage = (): JSX.Element => {
           </span>
         </p>
 
-        {!accountExists && (
+        {!isRegistered && (
           <Button size="auto" variant="primary">
             <Link href="/signup/registerEmail">Register</Link>
           </Button>
@@ -53,19 +51,19 @@ const SignupPage = (): JSX.Element => {
 
         {/* {!isConnected && <ConnectButton />} */}
 
-        {accountExists && appState === EAppState.APPLICATION && (
+        {appState === EAppState.APPLICATION && (
           <Button size="auto" variant="primary">
             <Link href="/applications/new">Start Application</Link>
           </Button>
         )}
 
-        {accountExists && isRegistered && appState === EAppState.VOTING && (
+        {isRegistered && appState === EAppState.VOTING && (
           <Button size="auto" variant="primary">
             <Link href="/projects">View projects</Link>
           </Button>
         )}
 
-        {accountExists && !isRegistered && <JoinButton />}
+        {/* {!isRegistered && <JoinButton />} */}
 
         <div className="my-8">
           <Info size="default" />
