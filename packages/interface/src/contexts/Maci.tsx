@@ -3,7 +3,6 @@ import { Identity } from "@semaphore-protocol/core";
 import { isAfter } from "date-fns";
 import { type Signer, BrowserProvider } from "ethers";
 import {
-  signup,
   isRegisteredUser,
   publishBatch,
   type TallyData,
@@ -13,6 +12,7 @@ import {
   GatekeeperTrait,
   getGatekeeperTrait,
   getHatsSingleGatekeeperData,
+  PubKey,
 } from "maci-cli/sdk";
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -24,8 +24,13 @@ import { getHatsClient } from "~/utils/hatsProtocol";
 import { getSemaphoreProof } from "~/utils/semaphore";
 
 import type { IVoteArgs, MaciContextType, MaciProviderProps } from "./types";
-import type { EIP1193Provider } from "viem";
+import { Address, decodeEventLog, parseEventLogs, type EIP1193Provider } from "viem";
 import type { Attestation } from "~/utils/types";
+import { publicClient } from "~/utils/permissionless";
+import maciAbi from "~/utils/MaciAbi.json";
+
+// Functions assuming EOA to examine in repo
+// useAccount, useSignMessage, useEthersSigner, Signer, JsonRpcSigner
 
 export const MaciContext = createContext<MaciContextType | undefined>(undefined);
 
@@ -35,9 +40,10 @@ export const MaciContext = createContext<MaciContextType | undefined>(undefined)
  * @returns The Context data (variables and functions)
  */
 export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProviderProps) => {
-  const signer = useEthersSigner();
-  const { address, smartAccount } = useSmartAccount();
+  const { address, smartAccount, smartAccountClient } = useSmartAccount();
+  const signer = useEthersSigner({ client: smartAccountClient });
 
+  const [isEligibleToVote, setIsEligibleToVote] = useState<boolean>();
   const [isRegistered, setIsRegistered] = useState<boolean>();
   const [stateIndex, setStateIndex] = useState<string>();
   const [initialVoiceCredits, setInitialVoiceCredits] = useState<number>(0);
@@ -107,10 +113,10 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
     // add custom logic for other gatekeepers here
     switch (gatekeeperTrait) {
       case GatekeeperTrait.Semaphore:
-        if (!signer) {
+        if (!signer || !semaphoreIdentity) {
           return;
         }
-        getSemaphoreProof(signer, semaphoreIdentity!)
+        getSemaphoreProof(signer, semaphoreIdentity)
           .then((proof) => {
             setSgData(proof);
           })
@@ -154,10 +160,17 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // just by fetching the attestation. On the other hand, with other
   // gatekeepers it might be more difficult to determine it
   // for instance with semaphore
-  const isEligibleToVote = useMemo(
-    () => gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address),
-    [sgData, address],
-  );
+  // const isEligibleToVote = useMemo(
+  //   () => gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address),
+  //   [sgData, address],
+  // );
+
+  // FIXME: doesn't run when it should do - consider function to retrieve this info that can be called
+  useEffect(() => {
+    const isEligible = gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address);
+    setIsEligibleToVote(isEligible)
+
+  }, [gatekeeperTrait, sgData, user.data, address, setIsEligibleToVote])
 
   // on load get the key pair from local storage and set the signature message
   useEffect(() => {
@@ -217,23 +230,55 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // function to be used to signup to MACI
   const onSignup = useCallback(
     async (onError: () => void) => {
-      if (!signer || !maciPubKey || (gatekeeperTrait && gatekeeperTrait !== GatekeeperTrait.FreeForAll && !sgData)) {
+      if (!smartAccount || !smartAccountClient || !maciPubKey || (gatekeeperTrait && gatekeeperTrait !== GatekeeperTrait.FreeForAll && !sgData)) {
         return;
       }
 
       setIsLoading(true);
 
       try {
-        const { stateIndex: index } = await signup({
-          maciPubKey,
-          maciAddress: config.maciAddress!,
-          sgDataArg: sgData,
-          signer,
+        const { request } = await publicClient.simulateContract({
+          account: smartAccount,
+          address: config.maciAddress! as Address,
+          abi: maciAbi.abi,
+          functionName: "signUp",
+          args: [
+            PubKey.deserialize(maciPubKey).asContractParam(),
+            sgData as Address,
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+          ],
+        });
+        const txHash = await smartAccountClient.writeContract(request);
+        console.log(txHash);
+
+        const txReceipt = await publicClient.getTransactionReceipt({ hash: txHash })
+        const logs = parseEventLogs({ 
+          abi: maciAbi.abi, 
+          eventName: 'SignUp',
+          args: {
+            _userPubKeyX: PubKey.deserialize(maciPubKey).rawPubKey[0]
+          },
+          logs: txReceipt.logs,
         });
 
-        if (index) {
+        if (!logs[0]) {
+          throw new Error("Unexpected event logs")
+        }
+        const topics = decodeEventLog({
+          abi: maciAbi.abi,
+          data: logs[0]?.data,
+          topics: logs[0]?.topics,
+          eventName: 'SignUp',
+        })
+        if (!topics.args) {
+          throw new Error("Expected event to have arguments but found none")
+        }
+        const stateIndex = (topics.args as unknown as { _stateIndex: bigint })._stateIndex;
+        if (stateIndex) {
           setIsRegistered(true);
-          setStateIndex(index);
+          setStateIndex(stateIndex.toString());
+        } else {
+          throw new Error("Unexpected event log arguments")
         }
       } catch (e) {
         onError();
@@ -242,7 +287,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         setIsLoading(false);
       }
     },
-    [maciPubKey, signer, setIsRegistered, setStateIndex, setIsLoading, sgData],
+    [maciPubKey, setIsRegistered, setStateIndex, setIsLoading, sgData],
   );
 
   // function to be used to vote on a poll

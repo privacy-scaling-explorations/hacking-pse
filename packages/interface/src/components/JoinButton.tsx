@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 import { useMaci } from "~/contexts/Maci";
@@ -16,8 +17,14 @@ export const JoinButton = (): JSX.Element => {
 
   return (
     <div>
-      {appState === EAppState.VOTING && !isEligibleToVote && (
+      {appState === EAppState.VOTING && !isEligibleToVote && isRegistered && (
         <Button variant="disabled">You are not allowed to vote</Button>
+      )}
+
+      {appState !== EAppState.TALLYING && !isEligibleToVote && !isRegistered &&  (
+        <Button variant="primary">
+          <Link href="/signup/registerEmail">Register</Link>
+        </Button>
       )}
 
       {appState === EAppState.VOTING && isEligibleToVote && !isRegistered && (

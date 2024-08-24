@@ -111,6 +111,7 @@ const RegisterEmail = (): JSX.Element => {
     });
     const txHash = await smartAccountClient.writeContract(request);
     console.log("txHash", txHash);
+    // TODO: Set isEligible to true
   };
 
   return (
