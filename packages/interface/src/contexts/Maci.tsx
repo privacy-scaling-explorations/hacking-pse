@@ -160,17 +160,17 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // just by fetching the attestation. On the other hand, with other
   // gatekeepers it might be more difficult to determine it
   // for instance with semaphore
-  // const isEligibleToVote = useMemo(
-  //   () => gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address),
-  //   [sgData, address],
-  // );
+  function checkEligibility(sgData: string | undefined, address: `0x${string}` | undefined): boolean {
+    return (gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address)) ?? false;
+  }
 
-  // FIXME: doesn't run when it should do - consider function to retrieve this info that can be called
   useEffect(() => {
-    const isEligible = gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address);
-    setIsEligibleToVote(isEligible)
+    setIsEligibleToVote(checkEligibility(sgData, address));
+  }, [sgData, address])
 
-  }, [gatekeeperTrait, sgData, user.data, address, setIsEligibleToVote])
+  const updateEligibility = async (_sgData: string, _address: `0x${string}`) => {
+    setIsEligibleToVote(checkEligibility(_sgData, _address));
+  }
 
   // on load get the key pair from local storage and set the signature message
   useEffect(() => {
@@ -464,6 +464,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
       maciPubKey,
       onSignup,
       onVote,
+      updateEligibility,
     }),
     [
       isLoading,
@@ -478,6 +479,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
       maciPubKey,
       onSignup,
       onVote,
+      updateEligibility,
     ],
   );
 

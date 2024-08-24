@@ -21,10 +21,15 @@ import {
 } from "../../features/signup/types";
 import { Button } from "~/components/ui/Button";
 import useSmartAccount from "~/hooks/useSmartAccount";
+import { getSemaphoreProof } from "~/utils/semaphore";
+import { useMaci } from "~/contexts/Maci";
+import { useEthersSigner } from "~/hooks/useEthersSigner";
 
 const RegisterEmail = (): JSX.Element => {
   const { address, smartAccount, smartAccountClient } = useSmartAccount();
   const router = useRouter();
+  const { updateEligibility } = useMaci();
+  const signer = useEthersSigner({ client: smartAccountClient });
   const [emailField, setEmail] = useState<EmailField>();
 
   const registerEmail = async (emailField: EmailField) => {
@@ -93,8 +98,8 @@ const RegisterEmail = (): JSX.Element => {
     }
 
     const semaphoreIdentity = localStorage.getItem("semaphoreIdentity");
-    if (!semaphoreIdentity) {
-      throw new Error("No Semaphore Identity");
+    if (!semaphoreIdentity || !signer) {
+      throw new Error("No Semaphore Identity or signer");
     }
 
     const identityCommitment = new Identity(semaphoreIdentity).commitment;
@@ -111,7 +116,12 @@ const RegisterEmail = (): JSX.Element => {
     });
     const txHash = await smartAccountClient.writeContract(request);
     console.log("txHash", txHash);
-    // TODO: Set isEligible to true
+
+    const proof = await getSemaphoreProof(
+      signer,
+      new Identity(semaphoreIdentity)
+    );
+    await updateEligibility(proof, address);
   };
 
   return (
