@@ -111,8 +111,6 @@ const Header = ({ navLinks }: IHeaderProps) => {
             variant="ghost"
             onClick={handleChangeTheme}
           />
-
-          {/* <ConnectButton /> */}
           <p>{`Addr: ${smartAccount?.address ?? ""}`}</p>
         </div>
 

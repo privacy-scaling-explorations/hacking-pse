@@ -12,7 +12,6 @@ import {
   GatekeeperTrait,
   getGatekeeperTrait,
   getHatsSingleGatekeeperData,
-  PubKey,
 } from "maci-cli/sdk";
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -24,13 +23,9 @@ import { getHatsClient } from "~/utils/hatsProtocol";
 import { getSemaphoreProof } from "~/utils/semaphore";
 
 import type { IVoteArgs, MaciContextType, MaciProviderProps } from "./types";
-import { Address, decodeEventLog, parseEventLogs, type EIP1193Provider } from "viem";
+import { type EIP1193Provider } from "viem";
 import type { Attestation } from "~/utils/types";
-import { publicClient } from "~/utils/permissionless";
-import maciAbi from "~/utils/MaciAbi.json";
-
-// Functions assuming EOA to examine in repo
-// useAccount, useSignMessage, useEthersSigner, Signer, JsonRpcSigner
+import signUp from "~/utils/signUp";
 
 export const MaciContext = createContext<MaciContextType | undefined>(undefined);
 
@@ -153,7 +148,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
       default:
         break;
     }
-  }, [gatekeeperTrait, attestationId, semaphoreIdentity, signer]);
+  }, [gatekeeperTrait, attestationId, semaphoreIdentity, signer, isEligibleToVote]);
 
   // a user is eligible to vote if they pass certain conditions
   // with gatekeepers like EAS it is possible to determine whether you are allowed
@@ -208,6 +203,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
     const maciPubKey = localStorage.getItem("maciPubKey");
     const semaphoreIdentity = localStorage.getItem("semaphoreIdentity");
 
+    // Only generate key pair & identity if values do not exist in local storage
     if (!maciPrivKey || !maciPubKey || !semaphoreIdentity) {
       const signature = await smartAccount.signMessage({ message: signatureMessage });
       const newSemaphoreIdentity = new Identity(signature);
@@ -230,50 +226,12 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // function to be used to signup to MACI
   const onSignup = useCallback(
     async (onError: () => void) => {
-      if (!smartAccount || !smartAccountClient || !maciPubKey || (gatekeeperTrait && gatekeeperTrait !== GatekeeperTrait.FreeForAll && !sgData)) {
+      if (!smartAccount || !smartAccountClient || !maciPubKey || !sgData || (gatekeeperTrait && gatekeeperTrait !== GatekeeperTrait.FreeForAll && !sgData)) {
         return;
       }
-
       setIsLoading(true);
-
       try {
-        const { request } = await publicClient.simulateContract({
-          account: smartAccount,
-          address: config.maciAddress! as Address,
-          abi: maciAbi.abi,
-          functionName: "signUp",
-          args: [
-            PubKey.deserialize(maciPubKey).asContractParam(),
-            sgData as Address,
-            "0x0000000000000000000000000000000000000000000000000000000000000000",
-          ],
-        });
-        const txHash = await smartAccountClient.writeContract(request);
-        console.log(txHash);
-
-        const txReceipt = await publicClient.getTransactionReceipt({ hash: txHash })
-        const logs = parseEventLogs({ 
-          abi: maciAbi.abi, 
-          eventName: 'SignUp',
-          args: {
-            _userPubKeyX: PubKey.deserialize(maciPubKey).rawPubKey[0]
-          },
-          logs: txReceipt.logs,
-        });
-
-        if (!logs[0]) {
-          throw new Error("Unexpected event logs")
-        }
-        const topics = decodeEventLog({
-          abi: maciAbi.abi,
-          data: logs[0]?.data,
-          topics: logs[0]?.topics,
-          eventName: 'SignUp',
-        })
-        if (!topics.args) {
-          throw new Error("Expected event to have arguments but found none")
-        }
-        const stateIndex = (topics.args as unknown as { _stateIndex: bigint })._stateIndex;
+        const stateIndex = await signUp(smartAccount, smartAccountClient, maciPubKey, sgData);
         if (stateIndex) {
           setIsRegistered(true);
           setStateIndex(stateIndex.toString());
@@ -346,7 +304,6 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   }, [maciPubKey, user]);
 
   // check if the user already registered
-  // TODO: add useSmartAccount values?
   useEffect(() => {
     if (!signer || !maciPubKey || !address || isLoading) {
       return;
