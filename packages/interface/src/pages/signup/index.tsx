@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import Link from "next/link";
 
-import { ConnectButton } from "~/components/ConnectButton";
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Info } from "~/components/Info";
 import { JoinButton } from "~/components/JoinButton";
@@ -10,14 +9,14 @@ import { Heading } from "~/components/ui/Heading";
 import { config } from "~/config";
 import { useMaci } from "~/contexts/Maci";
 import { FAQList } from "~/features/signup/components/FaqList";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { Layout } from "~/layouts/DefaultLayout";
 import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
-import { useAccount } from "~/hooks/useAccount";
 
 const SignupPage = (): JSX.Element => {
-  const accountExists = useAccount();
   const { isRegistered } = useMaci();
+  const { address } = useSmartAccount();
   const appState = useAppState();
 
   return (
@@ -45,27 +44,19 @@ const SignupPage = (): JSX.Element => {
           </span>
         </p>
 
-        {!accountExists && (
-          <Button size="auto" variant="primary">
-            <Link href="/signup/registerEmail">Register</Link>
-          </Button>
-        )}
-
-        {/* {!isConnected && <ConnectButton />} */}
-
-        {accountExists && appState === EAppState.APPLICATION && (
+        {address && isRegistered && appState === EAppState.APPLICATION && (
           <Button size="auto" variant="primary">
             <Link href="/applications/new">Start Application</Link>
           </Button>
         )}
 
-        {accountExists && isRegistered && appState === EAppState.VOTING && (
+        {address && isRegistered && appState === EAppState.VOTING && (
           <Button size="auto" variant="primary">
             <Link href="/projects">View projects</Link>
           </Button>
         )}
 
-        {accountExists && !isRegistered && <JoinButton />}
+        {address && !isRegistered && <JoinButton />}
 
         <div className="my-8">
           <Info size="default" />

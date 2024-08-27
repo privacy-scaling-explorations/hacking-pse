@@ -24,7 +24,11 @@ export interface MaciContextType {
   onVote: (
     args: IVoteArgs[],
     onError: () => void | Promise<void>,
-    onSuccess: () => void | Promise<void>,
+    onSuccess: () => void | Promise<void>
+  ) => Promise<void>;
+  updateEligibility: (
+    sgData: string | undefined,
+    address: `0x${string}` | undefined
   ) => Promise<void>;
 }
 

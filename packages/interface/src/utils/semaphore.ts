@@ -1,6 +1,6 @@
 import { Group, Identity, generateProof, type SemaphoreProof } from "@semaphore-protocol/core";
 import { SemaphoreEthers, SemaphoreSubgraph } from "@semaphore-protocol/data";
-import { AbiCoder, JsonRpcSigner } from "ethers";
+import { AbiCoder, Signer } from "ethers";
 import { getSemaphoreGatekeeperData } from "maci-cli/sdk";
 
 import { config, getRPCURL, semaphoreEthersChain } from "~/config";
@@ -27,7 +27,7 @@ export const encodeSemaphoreProof = (semaphoreProof: SemaphoreProof): string => 
  * @param identity - The identity to use to generate the semaphore proof
  * @returns a string of the encoded semaphore proof
  */
-export const getSemaphoreProof = async (signer: JsonRpcSigner, identity: Identity): Promise<string> => {
+export const getSemaphoreProof = async (signer: Signer, identity: Identity): Promise<string> => {
   const { address: semaphoreContractAddress, groupId } = await getSemaphoreGatekeeperData({
     signer,
     maciAddress: config.maciAddress!,

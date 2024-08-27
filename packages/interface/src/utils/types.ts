@@ -1,4 +1,4 @@
-import { type Address } from "viem";
+import { type Chain, type Address } from "viem";
 
 export enum EAppState {
   LOADING = "LOADING",
@@ -84,3 +84,25 @@ export const AttestationsQuery = `
     }
   }
 `;
+
+export type Config = {
+  logoUrl: string;
+  pageSize: number;
+  voteLimit: number;
+  startsAt: Date | undefined;
+  registrationEndsAt: Date | undefined;
+  resultsAt: Date | undefined;
+  tokenName: string;
+  eventName: string;
+  roundId: string;
+  admin: `0x${string}`;
+  network: Chain;
+  maciAddress: string | undefined;
+  maciStartBlock: number;
+  maciSubgraphUrl: string;
+  tallyUrl: string | undefined;
+  roundOrganizer: string;
+  pollMode: string;
+  roundLogo: string | undefined;
+  semaphoreSubgraphUrl: string | undefined;
+};

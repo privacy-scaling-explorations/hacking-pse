@@ -43,7 +43,11 @@ app.post('/send-otp', async (req, res) => {
         await sendOtp(email)
         return res.status(200).json({ message: 'OTP sent successfully' })
     } catch (error) {
-        return res.status(500).json({ message: 'Failed to send OTP', error })
+        if (error instanceof Error) {
+            // TODO: (merge-ok) 500 isn't appropriate in all cases e.g. "User already registered". Add better error handling
+            return res.status(500).json({ message: error.message })
+        }
+        return res.status(500).json({ message: 'Failed to send OTP' })
     }
 })
 
