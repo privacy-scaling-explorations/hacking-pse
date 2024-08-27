@@ -42,9 +42,6 @@ const signUp = async (
   const logs = parseEventLogs({
     abi: MACIFactory.abi,
     eventName: "SignUp",
-    args: {
-      _userPubKeyX: PubKey.deserialize(maciPubKey).rawPubKey[0],
-    },
     logs: txReceipt.logs,
   });
 
@@ -52,19 +49,10 @@ const signUp = async (
     throw new Error("Unexpected event logs");
   }
 
-  const topics = decodeEventLog({
-    abi: MACIFactory.abi,
-    data: logs[0]?.data,
-    topics: logs[0]?.topics,
-    eventName: "SignUp",
-  });
-  if (!topics.args) {
-    throw new Error("Expected event to have arguments but found none");
-  }
-
-  const stateIndex = (topics.args as unknown as { _stateIndex: bigint })
-    ._stateIndex;
-  return stateIndex;
+  return {
+    stateIndex: logs[0].args._stateIndex,
+    voiceCreditBalance: logs[0].args._voiceCreditBalance,
+  };
 };
 
 export default signUp;

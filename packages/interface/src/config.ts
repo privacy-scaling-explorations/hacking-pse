@@ -1,4 +1,5 @@
 import * as wagmiChains from "wagmi/chains";
+import { Config } from "./utils/types";
 
 export const metadata = {
   title: "MACI PLATFORM",
@@ -91,7 +92,7 @@ export const getPimlicoRPCURL = (): string | undefined => {
   }
 };
 
-export const config = {
+export const config: Config = {
   logoUrl: "/Logo.svg",
   pageSize: 3 * 4,
   // TODO: temp solution until we come up with solid one

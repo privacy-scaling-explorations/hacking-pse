@@ -231,10 +231,11 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
       }
       setIsLoading(true);
       try {
-        const stateIndex = await signUp(smartAccount, smartAccountClient, maciPubKey, sgData);
+        const { stateIndex, voiceCreditBalance } = await signUp(smartAccount, smartAccountClient, maciPubKey, sgData);
         if (stateIndex) {
           setIsRegistered(true);
           setStateIndex(stateIndex.toString());
+          setInitialVoiceCredits(Number(voiceCreditBalance));
         } else {
           throw new Error("Unexpected event log arguments")
         }
