@@ -155,16 +155,16 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // just by fetching the attestation. On the other hand, with other
   // gatekeepers it might be more difficult to determine it
   // for instance with semaphore
-  function checkEligibility(sgData: string | undefined, address: `0x${string}` | undefined): boolean {
-    return (gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address)) ?? false;
-  }
-
   useEffect(() => {
-    setIsEligibleToVote(checkEligibility(sgData, address));
+    updateEligibility(sgData, address);
   }, [sgData, address])
 
-  const updateEligibility = async (_sgData: string, _address: `0x${string}`) => {
+  const updateEligibility = (_sgData: string | undefined, _address: `0x${string}` | undefined) => {
     setIsEligibleToVote(checkEligibility(_sgData, _address));
+  }
+
+  function checkEligibility(sgData: string | undefined, address: `0x${string}` | undefined): boolean {
+    return (gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address)) ?? false;
   }
 
   // on load get the key pair from local storage and set the signature message
