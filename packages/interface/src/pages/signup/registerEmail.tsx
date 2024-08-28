@@ -27,9 +27,10 @@ import { useEthersSigner } from "~/hooks/useEthersSigner";
 
 const RegisterEmail = (): JSX.Element => {
   const { address, smartAccount, smartAccountClient } = useSmartAccount();
-  const router = useRouter();
-  const { updateEligibility } = useMaci();
   const signer = useEthersSigner({ client: smartAccountClient });
+  const { updateEligibility } = useMaci();
+  const router = useRouter();
+
   const [emailField, setEmail] = useState<EmailField>();
 
   const registerEmail = async (emailField: EmailField) => {

@@ -1,9 +1,8 @@
-import { Transaction } from "@ethereum-attestation-service/eas-sdk";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
-import { useAccount } from "wagmi";
+import { Hex } from "viem";
 
 import { ImageUpload } from "~/components/ImageUpload";
 import { FieldArray, Form, FormControl, FormSection, Select, Textarea } from "~/components/ui/Form";
@@ -17,13 +16,14 @@ import { ApplicationButtons, EApplicationStep } from "./ApplicationButtons";
 import { ApplicationSteps } from "./ApplicationSteps";
 import { ImpactTags } from "./ImpactTags";
 import { ReviewApplicationDetails } from "./ReviewApplicationDetails";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 export const ApplicationForm = (): JSX.Element => {
   const clearDraft = useLocalStorage("application-draft")[2];
 
   const { isCorrectNetwork, correctNetwork } = useIsCorrectNetwork();
 
-  const { address } = useAccount();
+  const { address } = useSmartAccount();
 
   const router = useRouter();
 
@@ -52,14 +52,14 @@ export const ApplicationForm = (): JSX.Element => {
   }, [step, setStep]);
 
   const create = useCreateApplication({
-    onSuccess: (data: Transaction<string[]>) => {
+    onSuccess: (hash: Hex) => {
       clearDraft();
-      router.push(`/applications/confirmation?txHash=${data.tx.hash}`);
+      router.push(`/applications/confirmation?txHash=${hash}`);
     },
-    onError: (err: { reason?: string; data?: { message: string } }) =>
+    onError: (err: { reason?: string; data?: { message: string } }) => {
       toast.error("Application create error", {
         description: err.reason ?? err.data?.message,
-      }),
+      })},
   });
 
   const { error: createError } = create;

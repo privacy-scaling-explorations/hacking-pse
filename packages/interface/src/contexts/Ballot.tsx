@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { useAccount } from "wagmi";
 
 import { config } from "~/config";
 
@@ -13,8 +12,6 @@ const defaultBallot = { votes: [], published: false, edited: false };
 export const BallotProvider: React.FC<BallotProviderProps> = ({ children }: BallotProviderProps) => {
   const [ballot, setBallot] = useState<Ballot>(defaultBallot);
   const [isLoading, setLoading] = useState<boolean>(true);
-
-  const { isDisconnected } = useAccount();
 
   // when summing the ballot we take the individual vote and square it
   // if the mode is quadratic voting, otherwise we just add the amount
@@ -101,12 +98,6 @@ export const BallotProvider: React.FC<BallotProviderProps> = ({ children }: Ball
       saveBallot();
     }
   }, [ballot, ballot.votes, ballot.published, saveBallot]);
-
-  useEffect(() => {
-    if (isDisconnected) {
-      deleteBallot();
-    }
-  }, [isDisconnected, deleteBallot]);
 
   const value = useMemo(
     () => ({

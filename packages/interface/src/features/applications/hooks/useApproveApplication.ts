@@ -1,18 +1,20 @@
-import { type Transaction } from "@ethereum-attestation-service/eas-sdk";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Hex } from "viem";
 
 import { config, eas } from "~/config";
 import { type TransactionError } from "~/features/voters/hooks/useApproveVoters";
 import { useAttest } from "~/hooks/useEAS";
 import { useEthersSigner } from "~/hooks/useEthersSigner";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { createAttestation } from "~/lib/eas/createAttestation";
 
 export function useApproveApplication(opts?: {
   onSuccess?: () => void;
-}): UseMutationResult<Transaction<string[]>, Error | TransactionError, string[]> {
+}): UseMutationResult<Hex, Error | TransactionError, string[]> {
   const attest = useAttest();
-  const signer = useEthersSigner();
+  const { smartAccountClient } = useSmartAccount();
+  const signer = useEthersSigner({ client: smartAccountClient });
 
   return useMutation({
     mutationFn: async (applicationIds: string[]) => {

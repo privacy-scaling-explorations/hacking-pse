@@ -1,4 +1,5 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
+import { Hex } from "viem";
 
 import { config, eas } from "~/config";
 import { type TransactionError } from "~/features/voters/hooks/useApproveVoters";
@@ -6,10 +7,9 @@ import { useAttest, useCreateAttestation } from "~/hooks/useEAS";
 import { useUploadMetadata } from "~/hooks/useMetadata";
 
 import type { Application } from "../types";
-import type { Transaction } from "@ethereum-attestation-service/eas-sdk";
 
 export type TUseCreateApplicationReturn = Omit<
-  UseMutationResult<Transaction<string[]>, Error | TransactionError, Application>,
+  UseMutationResult<Hex, Error | TransactionError, Application>,
   "error"
 > & {
   error: Error | TransactionError | null;
@@ -18,7 +18,7 @@ export type TUseCreateApplicationReturn = Omit<
 };
 
 export function useCreateApplication(options: {
-  onSuccess: (data: Transaction<string[]>) => void;
+  onSuccess: (hash: Hex) => void;
   onError: (err: TransactionError) => void;
 }): TUseCreateApplicationReturn {
   const attestation = useCreateAttestation();

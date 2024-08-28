@@ -1,12 +1,11 @@
-import { useAccount } from "wagmi";
-
 import { Alert } from "~/components/ui/Alert";
 import { Spinner } from "~/components/ui/Spinner";
 import { useApprovedVoter } from "~/features/voters/hooks/useApprovedVoter";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { Layout } from "~/layouts/DefaultLayout";
 
 const VotersPage = (): JSX.Element => {
-  const { address } = useAccount();
+  const { address } = useSmartAccount();
   const approved = useApprovedVoter(address!);
 
   if (approved.isLoading) {

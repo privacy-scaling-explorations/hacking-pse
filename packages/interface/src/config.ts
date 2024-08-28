@@ -1,5 +1,6 @@
 import * as wagmiChains from "wagmi/chains";
 import { Config } from "./utils/types";
+import { Address } from "viem";
 
 export const metadata = {
   title: "MACI PLATFORM",
@@ -104,7 +105,7 @@ export const config: Config = {
   tokenName: process.env.NEXT_PUBLIC_TOKEN_NAME!,
   eventName: process.env.NEXT_PUBLIC_EVENT_NAME ?? "MACI-PLATFORM",
   roundId: process.env.NEXT_PUBLIC_ROUND_ID!,
-  admin: (process.env.NEXT_PUBLIC_ADMIN_ADDRESS ?? "") as `0x${string}`,
+  admin: (process.env.NEXT_PUBLIC_ADMIN_ADDRESS ?? "") as Address,
   network: wagmiChains[process.env.NEXT_PUBLIC_CHAIN_NAME as keyof typeof wagmiChains],
   maciAddress: process.env.NEXT_PUBLIC_MACI_ADDRESS,
   maciStartBlock: Number(process.env.NEXT_PUBLIC_MACI_START_BLOCK ?? 0),
