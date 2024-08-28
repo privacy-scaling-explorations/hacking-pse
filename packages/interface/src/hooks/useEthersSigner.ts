@@ -7,7 +7,7 @@ import { useConnectorClient } from "wagmi";
 import { getRPCURL } from "~/config";
 
 function clientToSigner(client: SmartAccountClient<EntryPoint, HttpTransport, Chain>): JsonRpcSigner | undefined {
-  const { account, chain, transport } = client;
+  const { account, chain } = client;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!chain || !account) {

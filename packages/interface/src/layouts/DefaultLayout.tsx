@@ -1,5 +1,4 @@
 import { type ReactNode, type PropsWithChildren, useMemo } from "react";
-import { useAccount } from "wagmi";
 
 import { BallotOverview } from "~/components/BallotOverview";
 import Header from "~/components/Header";
@@ -13,6 +12,7 @@ import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
 
 import { BaseLayout, type LayoutProps } from "./BaseLayout";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 interface ILayoutProps extends PropsWithChildren<LayoutProps> {
   sidebar?: "left" | "right";
@@ -22,7 +22,7 @@ interface ILayoutProps extends PropsWithChildren<LayoutProps> {
 }
 
 export const Layout = ({ children = null, ...props }: ILayoutProps): JSX.Element => {
-  const { address } = useAccount();
+  const { address } = useSmartAccount();
   const appState = useAppState();
   const { ballot } = useBallot();
   const { isRegistered } = useMaci();
@@ -83,7 +83,7 @@ export const Layout = ({ children = null, ...props }: ILayoutProps): JSX.Element
 
 export const LayoutWithSidebar = ({ ...props }: ILayoutProps): JSX.Element => {
   const { isRegistered } = useMaci();
-  const { address } = useAccount();
+  const { address } = useSmartAccount();
   const { ballot } = useBallot();
   const appState = useAppState();
 
