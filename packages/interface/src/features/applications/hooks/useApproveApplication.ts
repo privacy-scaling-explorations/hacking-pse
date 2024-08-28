@@ -1,5 +1,6 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Hex } from "viem";
 
 import { config, eas } from "~/config";
 import { type TransactionError } from "~/features/voters/hooks/useApproveVoters";
@@ -10,7 +11,7 @@ import { createAttestation } from "~/lib/eas/createAttestation";
 
 export function useApproveApplication(opts?: {
   onSuccess?: () => void;
-}): UseMutationResult<`0x${string}`, Error | TransactionError, string[]> {
+}): UseMutationResult<Hex, Error | TransactionError, string[]> {
   const attest = useAttest();
   const { smartAccountClient } = useSmartAccount();
   const signer = useEthersSigner({ client: smartAccountClient });

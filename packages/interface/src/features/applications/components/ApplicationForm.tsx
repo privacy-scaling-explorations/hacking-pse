@@ -1,8 +1,8 @@
-import { Transaction } from "@ethereum-attestation-service/eas-sdk";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
+import { Hex } from "viem";
 
 import { ImageUpload } from "~/components/ImageUpload";
 import { FieldArray, Form, FormControl, FormSection, Select, Textarea } from "~/components/ui/Form";
@@ -52,7 +52,7 @@ export const ApplicationForm = (): JSX.Element => {
   }, [step, setStep]);
 
   const create = useCreateApplication({
-    onSuccess: (hash: `0x${string}`) => {
+    onSuccess: (hash: Hex) => {
       clearDraft();
       router.push(`/applications/confirmation?txHash=${hash}`);
     },

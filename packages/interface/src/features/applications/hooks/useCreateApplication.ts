@@ -1,4 +1,5 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
+import { Hex } from "viem";
 
 import { config, eas } from "~/config";
 import { type TransactionError } from "~/features/voters/hooks/useApproveVoters";
@@ -8,7 +9,7 @@ import { useUploadMetadata } from "~/hooks/useMetadata";
 import type { Application } from "../types";
 
 export type TUseCreateApplicationReturn = Omit<
-  UseMutationResult<`0x${string}`, Error | TransactionError, Application>,
+  UseMutationResult<Hex, Error | TransactionError, Application>,
   "error"
 > & {
   error: Error | TransactionError | null;
@@ -17,7 +18,7 @@ export type TUseCreateApplicationReturn = Omit<
 };
 
 export function useCreateApplication(options: {
-  onSuccess: (hash: `0x${string}`) => void;
+  onSuccess: (hash: Hex) => void;
   onError: (err: TransactionError) => void;
 }): TUseCreateApplicationReturn {
   const attestation = useCreateAttestation();

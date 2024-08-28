@@ -14,6 +14,7 @@ import {
   getHatsSingleGatekeeperData,
 } from "maci-cli/sdk";
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from "react";
+import { Address, type EIP1193Provider } from "viem";
 
 import { config } from "~/config";
 import { useEthersSigner } from "~/hooks/useEthersSigner";
@@ -23,7 +24,6 @@ import { getHatsClient } from "~/utils/hatsProtocol";
 import { getSemaphoreProof } from "~/utils/semaphore";
 
 import type { IVoteArgs, MaciContextType, MaciProviderProps } from "./types";
-import { type EIP1193Provider } from "viem";
 import type { Attestation } from "~/utils/types";
 import signUp from "~/utils/signUp";
 
@@ -159,11 +159,11 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
     updateEligibility(sgData, address);
   }, [sgData, address])
 
-  const updateEligibility = (_sgData: string | undefined, _address: `0x${string}` | undefined) => {
+  const updateEligibility = (_sgData: string | undefined, _address: Address | undefined) => {
     setIsEligibleToVote(checkEligibility(_sgData, _address));
   }
 
-  function checkEligibility(sgData: string | undefined, address: `0x${string}` | undefined): boolean {
+  function checkEligibility(sgData: string | undefined, address: Address | undefined): boolean {
     return (gatekeeperTrait && (gatekeeperTrait === GatekeeperTrait.FreeForAll || Boolean(sgData)) && Boolean(address)) ?? false;
   }
 

@@ -5,7 +5,7 @@ import { type DefaultError, type UseMutationResult, useMutation } from "@tanstac
 import { useEthersSigner } from "~/hooks/useEthersSigner";
 import { createAttestation } from "~/lib/eas/createAttestation";
 import useSmartAccount from "./useSmartAccount";
-import { Address } from "viem";
+import { Address, Hex } from "viem";
 import { publicClient } from "~/utils/permissionless";
 import { eas } from "~/config";
 
@@ -28,7 +28,7 @@ export function useCreateAttestation(): UseMutationResult<
   });
 }
 
-export function useAttest(): UseMutationResult<`0x${string}`, DefaultError, MultiAttestationRequest[]> {
+export function useAttest(): UseMutationResult<Hex, DefaultError, MultiAttestationRequest[]> {
   const { smartAccount, smartAccountClient } = useSmartAccount();
   const signer = useEthersSigner({ client: smartAccountClient });
 
@@ -39,13 +39,13 @@ export function useAttest(): UseMutationResult<`0x${string}`, DefaultError, Mult
       }
       
       const multiAttestationRequests = attestations.map((r) => ({
-        schema: r.schema as `0x${string}`,
+        schema: r.schema as Hex,
         data: r.data.map((d) => ({
-          recipient: (d.recipient ?? ZERO_ADDRESS) as `0x${string}`,
+          recipient: (d.recipient ?? ZERO_ADDRESS) as Address,
           expirationTime: d.expirationTime ?? NO_EXPIRATION,
           revocable: d.revocable ?? true,
-          refUID: (d.refUID ?? ZERO_BYTES32) as `0x${string}`,
-          data: (d.data ?? ZERO_BYTES32) as `0x${string}`,
+          refUID: (d.refUID ?? ZERO_BYTES32) as Hex,
+          data: (d.data ?? ZERO_BYTES32) as Hex,
           value: d.value ?? 0n
         }))
       }));

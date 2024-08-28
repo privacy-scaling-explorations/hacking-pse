@@ -95,7 +95,7 @@ export type Config = {
   tokenName: string;
   eventName: string;
   roundId: string;
-  admin: `0x${string}`;
+  admin: Address;
   network: Chain;
   maciAddress: string | undefined;
   maciStartBlock: number;

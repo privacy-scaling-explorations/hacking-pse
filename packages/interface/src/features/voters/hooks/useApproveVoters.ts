@@ -1,4 +1,5 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
+import { Hex } from "viem";
 
 import { config, eas } from "~/config";
 import { useAttest } from "~/hooks/useEAS";
@@ -15,7 +16,7 @@ export interface TransactionError {
 export function useApproveVoters(options: {
   onSuccess: () => void;
   onError: (err: TransactionError) => void;
-}): UseMutationResult<`0x${string}`, unknown, string[]> {
+}): UseMutationResult<Hex, unknown, string[]> {
   const attest = useAttest();
   const { smartAccountClient } = useSmartAccount();
   const signer = useEthersSigner({ client: smartAccountClient });
