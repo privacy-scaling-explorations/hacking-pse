@@ -128,13 +128,6 @@ const BallotPage = (): JSX.Element => {
   const { ballot, sumBallot } = useBallot();
   const router = useRouter();
   const appState = useAppState();
-
-  useEffect(() => {
-    if (!address) {
-      router.push("/");
-    }
-  }, [address, router]);
-
   const handleSubmit = useCallback(() => {
     sumBallot();
   }, [sumBallot]);
