@@ -34,9 +34,8 @@ const RegisterEmail = (): JSX.Element => {
   const [emailField, setEmail] = useState<EmailField>();
 
   const registerEmail = async (emailField: EmailField) => {
-    const url = "http://localhost:3001/send-otp";
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${config.backendUrl}/send-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,8 +65,7 @@ const RegisterEmail = (): JSX.Element => {
     const { otp: otp } = otpField;
 
     try {
-      const url = "http://localhost:3001/verify-otp";
-      const response = await fetch(url, {
+      const response = await fetch(`${config.backendUrl}/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

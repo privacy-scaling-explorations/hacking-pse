@@ -105,4 +105,5 @@ export type Config = {
   pollMode: string;
   roundLogo: string | undefined;
   semaphoreSubgraphUrl: string | undefined;
+  backendUrl: string;
 };

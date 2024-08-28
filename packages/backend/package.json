@@ -4,6 +4,7 @@
   "description": "The backed for hacking PSE",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "dev": "ts-node-dev src/index.ts"
   },
   "keywords": [],
