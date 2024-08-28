@@ -12,12 +12,12 @@ import {
   useMemo,
 } from "react";
 import { tv } from "tailwind-variants";
-import { useAccount } from "wagmi";
 
 import { Footer } from "~/components/Footer";
 import { createComponent } from "~/components/ui";
 import { metadata } from "~/config";
 import { useMaci } from "~/contexts/Maci";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 const Context = createContext({ eligibilityCheck: false, showBallot: false });
 
@@ -79,14 +79,14 @@ export const BaseLayout = ({
 >): JSX.Element => {
   const { theme } = useTheme();
   const router = useRouter();
-  const { address, isConnecting } = useAccount();
+  const { address } = useSmartAccount();
   const { isRegistered } = useMaci();
 
   const manageDisplay = useCallback(() => {
-    if ((requireAuth && !address && !isConnecting) || (requireRegistration && !isRegistered)) {
+    if ((requireAuth && !address) || (requireRegistration && !isRegistered)) {
       router.push("/");
     }
-  }, [requireAuth, address, isConnecting, requireRegistration, isRegistered, router]);
+  }, [requireAuth, address, requireRegistration, isRegistered, router]);
 
   useEffect(() => {
     manageDisplay();

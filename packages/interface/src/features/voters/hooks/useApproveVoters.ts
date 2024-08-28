@@ -1,9 +1,9 @@
-import { type Transaction } from "@ethereum-attestation-service/eas-sdk";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
 import { config, eas } from "~/config";
 import { useAttest } from "~/hooks/useEAS";
 import { useEthersSigner } from "~/hooks/useEthersSigner";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { createAttestation } from "~/lib/eas/createAttestation";
 
 // TODO: Move this to a shared folders
@@ -15,9 +15,10 @@ export interface TransactionError {
 export function useApproveVoters(options: {
   onSuccess: () => void;
   onError: (err: TransactionError) => void;
-}): UseMutationResult<Transaction<string[]>, unknown, string[]> {
+}): UseMutationResult<`0x${string}`, unknown, string[]> {
   const attest = useAttest();
-  const signer = useEthersSigner();
+  const { smartAccountClient } = useSmartAccount();
+  const signer = useEthersSigner({ client: smartAccountClient });
 
   return useMutation({
     mutationFn: async (voters: string[]) => {

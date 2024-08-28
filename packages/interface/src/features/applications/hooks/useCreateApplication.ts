@@ -6,10 +6,9 @@ import { useAttest, useCreateAttestation } from "~/hooks/useEAS";
 import { useUploadMetadata } from "~/hooks/useMetadata";
 
 import type { Application } from "../types";
-import type { Transaction } from "@ethereum-attestation-service/eas-sdk";
 
 export type TUseCreateApplicationReturn = Omit<
-  UseMutationResult<Transaction<string[]>, Error | TransactionError, Application>,
+  UseMutationResult<`0x${string}`, Error | TransactionError, Application>,
   "error"
 > & {
   error: Error | TransactionError | null;
@@ -18,7 +17,7 @@ export type TUseCreateApplicationReturn = Omit<
 };
 
 export function useCreateApplication(options: {
-  onSuccess: (data: Transaction<string[]>) => void;
+  onSuccess: (hash: `0x${string}`) => void;
   onError: (err: TransactionError) => void;
 }): TUseCreateApplicationReturn {
   const attestation = useCreateAttestation();

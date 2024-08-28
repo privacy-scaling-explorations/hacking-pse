@@ -15,7 +15,7 @@ import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
 
 const SignupPage = (): JSX.Element => {
-  const { isRegistered } = useMaci();
+  const { isRegistered, isEligibleToVote } = useMaci();
   const { address } = useSmartAccount();
   const appState = useAppState();
 
@@ -44,7 +44,7 @@ const SignupPage = (): JSX.Element => {
           </span>
         </p>
 
-        {address && isRegistered && appState === EAppState.APPLICATION && (
+        {address && isEligibleToVote && appState === EAppState.APPLICATION && (
           <Button size="auto" variant="primary">
             <Link href="/applications/new">Start Application</Link>
           </Button>

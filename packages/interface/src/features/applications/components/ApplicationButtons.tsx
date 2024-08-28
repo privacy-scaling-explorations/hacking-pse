@@ -1,6 +1,5 @@
 import { useMemo, useCallback, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { useAccount } from "wagmi";
 
 import { Button, IconButton } from "~/components/ui/Button";
 import { Dialog } from "~/components/ui/Dialog";
@@ -9,6 +8,7 @@ import { useIsCorrectNetwork } from "~/hooks/useIsCorrectNetwork";
 
 import type { Application } from "../types";
 import type { ImpactMetrix, ContributionLink, FundingSource } from "~/features/projects/types";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 export enum EApplicationStep {
   PROFILE,
@@ -33,7 +33,7 @@ export const ApplicationButtons = ({
 }: IApplicationButtonsProps): JSX.Element => {
   const { isCorrectNetwork } = useIsCorrectNetwork();
 
-  const { address } = useAccount();
+  const { address } = useSmartAccount();
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
 

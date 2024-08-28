@@ -1,6 +1,7 @@
-import { useAccount, useChainId } from "wagmi";
+import { useChainId } from "wagmi";
 
 import { config } from "~/config";
+import useSmartAccount from "./useSmartAccount";
 
 export interface IUseIsCorrectNetworkReturn {
   isCorrectNetwork: boolean;
@@ -8,7 +9,7 @@ export interface IUseIsCorrectNetworkReturn {
 }
 
 export function useIsCorrectNetwork(): IUseIsCorrectNetworkReturn {
-  const { isConnected } = useAccount();
+  const { isConnected } = useSmartAccount();
   const chainId = useChainId();
 
   const isCorrectNetwork = isConnected && chainId === config.network.id;

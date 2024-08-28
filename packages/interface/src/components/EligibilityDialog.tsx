@@ -1,17 +1,16 @@
 import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
-import { useAccount, useDisconnect } from "wagmi";
 
 import { useMaci } from "~/contexts/Maci";
 import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
 
 import { Dialog } from "./ui/Dialog";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
 export const EligibilityDialog = (): JSX.Element | null => {
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { address } = useSmartAccount();
 
   const [openDialog, setOpenDialog] = useState<boolean>(!!address);
   const { onSignup, isEligibleToVote, isRegistered } = useMaci();
@@ -34,10 +33,6 @@ export const EligibilityDialog = (): JSX.Element | null => {
     setOpenDialog(false);
   }, [setOpenDialog]);
 
-  const handleDisconnect = useCallback(() => {
-    disconnect();
-  }, [disconnect]);
-
   const handleGoToProjects = useCallback(() => {
     router.push("/projects");
   }, [router]);
@@ -46,7 +41,7 @@ export const EligibilityDialog = (): JSX.Element | null => {
     router.push("/applications/new");
   }, [router]);
 
-  if (appState === EAppState.APPLICATION) {
+  if (appState === EAppState.APPLICATION && isEligibleToVote) {
     return (
       <Dialog
         button="secondary"
@@ -123,9 +118,6 @@ export const EligibilityDialog = (): JSX.Element | null => {
   if (appState === EAppState.VOTING && !isEligibleToVote) {
     return (
       <Dialog
-        button="secondary"
-        buttonAction={handleDisconnect}
-        buttonName="Disconnect"
         description="To participate in this round, you must be in the voter's registry. Contact the round organizers to get access as a voter."
         isOpen={openDialog}
         size="sm"

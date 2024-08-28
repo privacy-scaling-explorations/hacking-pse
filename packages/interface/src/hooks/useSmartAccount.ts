@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { HttpTransport, Chain, http, Address } from "viem";
+import { HttpTransport, Chain, http, Address, Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import {
   createSmartAccountClient,
@@ -22,7 +22,7 @@ import { config, getPimlicoRPCURL } from "~/config";
 const createAccount = async (
   privateKey: string
 ): Promise<KernelEcdsaSmartAccount<EntryPoint, HttpTransport, Chain>> => {
-  const signer = privateKeyToAccount(privateKey);
+  const signer = privateKeyToAccount(privateKey as Hex);
   return await signerToEcdsaKernelSmartAccount(publicClient, {
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     signer,
@@ -48,6 +48,7 @@ const createAccountClient = async (
 
 const useSmartAccount = () => {
   const [address, setAddress] = useState<Address>();
+  const [isConnected, setIsConnected] = useState(false);
   const [smartAccount, setSmartAccount] =
     useState<KernelEcdsaSmartAccount<EntryPoint, HttpTransport, Chain>>();
   const [smartAccountClient, setSmartAccountClient] =
@@ -83,13 +84,19 @@ const useSmartAccount = () => {
       }
 
       setAddress(kernelAccount.address);
+      setIsConnected(true);
       setSmartAccount(kernelAccount);
       setSmartAccountClient(kernelAccountClient);
     };
     getSmartAccount();
   }, []);
 
-  return { address, smartAccount, smartAccountClient };
+  return {
+    address,
+    isConnected,
+    smartAccount,
+    smartAccountClient,
+  };
 };
 
 export default useSmartAccount;

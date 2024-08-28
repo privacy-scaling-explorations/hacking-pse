@@ -1,14 +1,13 @@
 import { differenceInDays } from "date-fns";
 import dynamic from "next/dynamic";
 import { useMemo, type PropsWithChildren } from "react";
-import { useAccount } from "wagmi";
 
-import { ConnectButton } from "~/components/ConnectButton";
 import { Alert } from "~/components/ui/Alert";
 import { Heading } from "~/components/ui/Heading";
 import { config } from "~/config";
 import { useMaci } from "~/contexts/Maci";
 import { useProjectCount, useProjectsResults, useResults } from "~/hooks/useResults";
+import useSmartAccount from "~/hooks/useSmartAccount";
 import { Layout } from "~/layouts/DefaultLayout";
 import { formatNumber } from "~/utils/formatNumber";
 import { useAppState } from "~/utils/state";
@@ -31,7 +30,7 @@ const Stats = () => {
   const results = useResults(pollData);
   const count = useProjectCount();
   const { data: projectsResults } = useProjectsResults(pollData);
-  const { isConnected } = useAccount();
+  const { isConnected } = useSmartAccount();
 
   const { averageVotes, projects = {} } = results.data ?? {};
 
@@ -46,20 +45,8 @@ const Stats = () => {
     return [{ id: "awarded", data }];
   }, [projects, projectsResults]);
 
-  if (isLoading) {
+  if (isLoading || !isConnected) {
     return <div>Loading...</div>;
-  }
-
-  if (!pollData && !isConnected) {
-    return (
-      <Alert className="mx-auto max-w-sm text-center" variant="info">
-        <Heading size="lg">Connect your wallet to see results</Heading>
-
-        <div className="mt-4">
-          <ConnectButton />
-        </div>
-      </Alert>
-    );
   }
 
   if (!pollData) {

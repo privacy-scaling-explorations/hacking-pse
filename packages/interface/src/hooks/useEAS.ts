@@ -1,16 +1,21 @@
-import { AttestationRequest, Transaction, type MultiAttestationRequest } from "@ethereum-attestation-service/eas-sdk";
+import { AttestationRequest, NO_EXPIRATION, ZERO_ADDRESS, ZERO_BYTES32, type MultiAttestationRequest } from "@ethereum-attestation-service/eas-sdk";
+import { EAS__factory as EASFactory } from '@ethereum-attestation-service/eas-contracts';
 import { type DefaultError, type UseMutationResult, useMutation } from "@tanstack/react-query";
 
 import { useEthersSigner } from "~/hooks/useEthersSigner";
 import { createAttestation } from "~/lib/eas/createAttestation";
-import { createEAS } from "~/lib/eas/createEAS";
+import useSmartAccount from "./useSmartAccount";
+import { Address } from "viem";
+import { publicClient } from "~/utils/permissionless";
+import { eas } from "~/config";
 
 export function useCreateAttestation(): UseMutationResult<
   AttestationRequest,
   DefaultError,
   { values: Record<string, unknown>; schemaUID: string }
 > {
-  const signer = useEthersSigner();
+  const { smartAccountClient } = useSmartAccount();
+  const signer = useEthersSigner({ client: smartAccountClient });
 
   return useMutation({
     mutationFn: async (data: { values: Record<string, unknown>; schemaUID: string }) => {
@@ -23,17 +28,50 @@ export function useCreateAttestation(): UseMutationResult<
   });
 }
 
-export function useAttest(): UseMutationResult<Transaction<string[]>, DefaultError, MultiAttestationRequest[]> {
-  const signer = useEthersSigner();
+export function useAttest(): UseMutationResult<`0x${string}`, DefaultError, MultiAttestationRequest[]> {
+  const { smartAccount, smartAccountClient } = useSmartAccount();
+  const signer = useEthersSigner({ client: smartAccountClient });
 
   return useMutation({
-    mutationFn: (attestations: MultiAttestationRequest[]) => {
-      if (!signer) {
-        throw new Error("Connect wallet first");
+    mutationFn: async (attestations: MultiAttestationRequest[]) => {
+      if (!smartAccount || !smartAccountClient) {
+        throw new Error("Smart account not connected");
       }
-      const eas = createEAS(signer);
-
-      return eas.multiAttest(attestations);
+      
+      const multiAttestationRequests = attestations.map((r) => ({
+        schema: r.schema as `0x${string}`,
+        data: r.data.map((d) => ({
+          recipient: (d.recipient ?? ZERO_ADDRESS) as `0x${string}`,
+          expirationTime: d.expirationTime ?? NO_EXPIRATION,
+          revocable: d.revocable ?? true,
+          refUID: (d.refUID ?? ZERO_BYTES32) as `0x${string}`,
+          data: (d.data ?? ZERO_BYTES32) as `0x${string}`,
+          value: d.value ?? 0n
+        }))
+      }));
+      
+      const requestedValue = multiAttestationRequests.reduce((res, { data }) => {
+        const total = data.reduce((res, r) => res + r.value, 0n);
+        return res + total;
+      }, 0n);
+      
+      if (requestedValue > 0n) {
+        throw new Error("Cannot sponsor a user operation that sends value")
+      }
+      
+      try {
+        const { request } = await publicClient.simulateContract({
+          account: smartAccount,
+          address: eas.contracts.eas as Address,
+          abi: EASFactory.abi,
+          functionName: "multiAttest",
+          args: [multiAttestationRequests],
+        });
+        return await smartAccountClient.writeContract(request);
+      } catch (error: unknown) {
+        console.error(error);
+        throw new Error("Error attesting");
+      }
     },
   });
 }
