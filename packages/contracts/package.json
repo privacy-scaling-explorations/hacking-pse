@@ -4,7 +4,7 @@
   "description": "PSE hackathon contracts",
   "scripts": {
     "clean": "rm -rf cache out",
-    "build": "forge build",
+    "build:contracts": "forge build",
     "dev": "anvil",
     "hackathon:deploy-sepolia": ". ./.env && forge script --chain sepolia script/Hackathon.s.sol:Deploy --fork-url $SEPOLIA_RPC_URL --broadcast --verify -vvvv",
     "format": "forge fmt",
