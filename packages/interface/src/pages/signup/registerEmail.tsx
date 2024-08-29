@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Address, encodeAbiParameters, parseAbiParameters } from "viem";
 import { publicClient } from "~/utils/permissionless";
 import { Identity } from "@semaphore-protocol/core";
-import SemaphoreAbi from "contracts/out/Semaphore.sol/Semaphore.json";
+import SemaphoreAbi from "~/utils/Semaphore.json";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
 import { Heading } from "~/components/ui/Heading";

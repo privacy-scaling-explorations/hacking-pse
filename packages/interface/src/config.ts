@@ -51,7 +51,7 @@ const hatsContractAddresses = {
 
 // Hats contract addresses for each chain
 const semaphoreContractAddresses = {
-  optimismSepolia: "0x71B93f8b0583f4033FAA1EE47d448B572933cefe",
+  optimismSepolia: "0x38DC863fD9b889a5849381C0b8C954A3c058D8E4",
 };
 
 /**
@@ -154,7 +154,7 @@ export const semaphore = {
           .NEXT_PUBLIC_CHAIN_NAME as keyof typeof semaphoreContractAddresses
       ],
   },
-  hatId: 53920304710440609890844568916334900684900534529047553357173057650688n,
+  hatId: 26960358043289970096177553829315270011263390106506980876069447401472n,
 };
 
 export const impactCategories = {
