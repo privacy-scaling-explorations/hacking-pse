@@ -1,16 +1,17 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import https from 'https'
+import fs from 'fs'
 
 import { sendOtp, verifyOtp } from './otp'
 import { getDb, initDb } from './db'
 import { hatsClient } from './hats'
-import { HAT_ID } from './constants'
+import { BIND_IP, HAT_ID, PORT, TLS_CERT, TLS_KEY } from './constants'
 import { account } from './account'
 import { SendOtpSchema, VerifyOtpSchema } from './types';
 
 const app = express()
-const port = 3001
 
 // todo: update origin to the frontend domain
 app.use(cors({
@@ -113,8 +114,12 @@ app.post('/verify-otp', async (req, res) => {
 
 // init db then start listening service
 initDb().then(() => {
-    app.listen(port, () => {
-        console.log(`Server is running on http://localhost:${port}`)
+    const httpsOptions = {
+        cert: fs.readFileSync(TLS_CERT),
+        key: fs.readFileSync(TLS_KEY)
+    }
+    https.createServer(httpsOptions, app).listen(PORT, BIND_IP, () => {
+        console.log(`Server is running on https://${BIND_IP}:${PORT}`)
     })}).catch((err: any) => {
         console.error('Failed to initialize database', err)
     })

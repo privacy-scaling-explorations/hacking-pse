@@ -115,6 +115,7 @@ export const config: Config = {
   pollMode: process.env.NEXT_PUBLIC_POLL_MODE ?? "non-qv",
   roundLogo: process.env.NEXT_PUBLIC_ROUND_LOGO,
   semaphoreSubgraphUrl: process.env.NEXT_PUBLIC_SEMAPHORE_SUBGRAPH,
+  backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL!,
 };
 
 export const theme = {
