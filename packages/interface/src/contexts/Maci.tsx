@@ -4,7 +4,6 @@ import { isAfter } from "date-fns";
 import { type Signer, BrowserProvider } from "ethers";
 import {
   isRegisteredUser,
-  publishBatch,
   type TallyData,
   type IGetPollData,
   getPoll,
@@ -26,6 +25,7 @@ import { getSemaphoreProof } from "~/utils/semaphore";
 import type { IVoteArgs, MaciContextType, MaciProviderProps } from "./types";
 import type { Attestation } from "~/utils/types";
 import signUp from "~/utils/signUp";
+import { publishBatch } from "~/utils/publishBatch";
 
 export const MaciContext = createContext<MaciContextType | undefined>(undefined);
 
@@ -252,7 +252,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
   // function to be used to vote on a poll
   const onVote = useCallback(
     async (votes: IVoteArgs[], onError: () => Promise<void>, onSuccess: () => Promise<void>) => {
-      if (!signer || !stateIndex || !pollData) {
+      if (!signer || !smartAccount || !smartAccountClient || !stateIndex || !pollData) {
         return;
       }
 
@@ -279,6 +279,8 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         privateKey: maciPrivKey!,
         pollId: BigInt(pollData.id),
         signer,
+        smartAccount,
+        smartAccountClient
       })
         .then(() => onSuccess())
         .catch((err: Error) => {

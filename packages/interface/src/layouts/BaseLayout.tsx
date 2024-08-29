@@ -83,7 +83,7 @@ export const BaseLayout = ({
   const { isRegistered } = useMaci();
 
   const manageDisplay = useCallback(() => {
-    if ((requireAuth && !address) || (requireRegistration && !isRegistered)) {
+    if (requireRegistration && !isRegistered) {
       router.push("/");
     }
   }, [requireAuth, address, requireRegistration, isRegistered, router]);

@@ -184,6 +184,9 @@ importers:
       maci-cli:
         specifier: ^2.2.0
         version: 2.2.1(5ocd64qtuox4mobu5be27w2nau)
+      maci-crypto:
+        specifier: ^2.2.0
+        version: 2.2.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       maci-domainobjs:
         specifier: ^2.2.0
         version: 2.2.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)

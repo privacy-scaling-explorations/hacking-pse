@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Button } from "~/components/ui/Button";
@@ -12,7 +11,6 @@ import { useBallot } from "~/contexts/Ballot";
 import { useMaci } from "~/contexts/Maci";
 import { AllocationFormWrapper } from "~/features/ballot/components/AllocationFormWrapper";
 import { BallotSchema } from "~/features/ballot/types";
-import useSmartAccount from "~/hooks/useSmartAccount";
 import { LayoutWithSidebar } from "~/layouts/DefaultLayout";
 import { formatNumber } from "~/utils/formatNumber";
 import { useAppState } from "~/utils/state";
@@ -124,17 +122,8 @@ const BallotAllocationForm = (): JSX.Element => {
 };
 
 const BallotPage = (): JSX.Element => {
-  const { address } = useSmartAccount();
   const { ballot, sumBallot } = useBallot();
-  const router = useRouter();
   const appState = useAppState();
-
-  useEffect(() => {
-    if (!address) {
-      router.push("/");
-    }
-  }, [address, router]);
-
   const handleSubmit = useCallback(() => {
     sumBallot();
   }, [sumBallot]);
