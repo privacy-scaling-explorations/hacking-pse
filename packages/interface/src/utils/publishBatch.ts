@@ -18,7 +18,6 @@ import { SmartAccountClient } from "permissionless";
 import { EntryPoint } from "permissionless/types";
 import { KernelEcdsaSmartAccount } from "permissionless/accounts";
 import { Address, HttpTransport, Chain } from "viem";
-// import { banner, validateSalt } from "node_modules/maci-cli/build/ts/utils"; // TODO: (merge-ok) this import breaks the frontend
 
 const MESSAGE_TREE_ARITY = 5;
 
@@ -45,9 +44,6 @@ export const publishBatch = async ({
   smartAccount,
   smartAccountClient,
 }: ISmartAccountPublishBatchArgs): Promise<IPublishBatchData> => {
-  // TODO: (merge-ok) should this be added back?
-  // banner(quiet);
-
   if (!PubKey.isValidSerializedPubKey(publicKey)) {
     throw new Error("invalid MACI public key");
   }
@@ -89,11 +85,6 @@ export const publishBatch = async ({
     if (nonce < 0) {
       throw new Error("invalid nonce");
     }
-
-    // TODO: (merge-ok) add validation back here
-    // if (salt && !validateSalt(salt)) {
-    //   throw new Error("invalid salt");
-    // }
   });
 
   const coordinatorPubKey = new PubKey([
