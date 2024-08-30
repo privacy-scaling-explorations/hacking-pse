@@ -1,13 +1,13 @@
-import { useMemo, type ReactNode } from "react";
-import { FaGithub, FaEthereum } from "react-icons/fa";
-import { RiGlobalLine } from "react-icons/ri";
+import { useMemo, type ReactNode } from "react"
+import { FaGithub, FaVideo } from "react-icons/fa"
+import { RiGlobalLine } from "react-icons/ri"
 
-import { type ImpactMetrix, type ContributionLink, type FundingSource } from "~/features/projects/types";
+import { type ImpactMetrix, type ContributionLink, type FundingSource } from "~/features/projects/types"
 
 interface ILinkFieldProps {
-  contributionLink?: ContributionLink;
-  impactMetrix?: ImpactMetrix;
-  fundingSource?: FundingSource;
+  contributionLink?: ContributionLink
+  impactMetrix?: ImpactMetrix
+  fundingSource?: FundingSource
 }
 
 export const LinkField = ({
@@ -16,40 +16,40 @@ export const LinkField = ({
   fundingSource = undefined,
 }: ILinkFieldProps): JSX.Element => {
   const logo = useMemo((): JSX.Element | null => {
-    if (contributionLink && contributionLink.type === "CONTRACT_ADDRESS") {
-      return <FaEthereum />;
+    if (contributionLink && contributionLink.type === "DEMO_VIDEO") {
+      return <FaVideo />
     }
 
     if (contributionLink && contributionLink.type === "GITHUB_REPO") {
-      return <FaGithub />;
+      return <FaGithub />
     }
 
     if (contributionLink || impactMetrix) {
-      return <RiGlobalLine />;
+      return <RiGlobalLine />
     }
 
-    return null;
-  }, [contributionLink, impactMetrix]);
+    return null
+  }, [contributionLink, impactMetrix])
 
   const title = useMemo((): string | undefined => {
     if (contributionLink) {
-      return contributionLink.description;
+      return contributionLink.description
     }
 
     if (impactMetrix) {
-      return impactMetrix.description;
+      return impactMetrix.description
     }
 
     if (fundingSource) {
-      return fundingSource.description;
+      return fundingSource.description
     }
 
-    return undefined;
-  }, [contributionLink, impactMetrix, fundingSource]);
+    return undefined
+  }, [contributionLink, impactMetrix, fundingSource])
 
   const content = useMemo((): ReactNode | undefined => {
     if (contributionLink) {
-      return contributionLink.url;
+      return contributionLink.url
     }
 
     if (impactMetrix) {
@@ -59,7 +59,7 @@ export const LinkField = ({
 
           <span>${impactMetrix.number}</span>
         </p>
-      );
+      )
     }
 
     if (fundingSource) {
@@ -69,11 +69,11 @@ export const LinkField = ({
 
           <span>{fundingSource.currency}</span>
         </p>
-      );
+      )
     }
 
-    return undefined;
-  }, [contributionLink, impactMetrix, fundingSource]);
+    return undefined
+  }, [contributionLink, impactMetrix, fundingSource])
 
   return (
     <div className="flex w-full flex-col justify-start gap-2">
@@ -85,5 +85,5 @@ export const LinkField = ({
         {content}
       </div>
     </div>
-  );
-};
+  )
+}

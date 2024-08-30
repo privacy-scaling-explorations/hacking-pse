@@ -1,20 +1,20 @@
-import { ClockIcon } from "lucide-react";
-import Link from "next/link";
-import { useFormContext } from "react-hook-form";
+import { ClockIcon } from "lucide-react"
+import Link from "next/link"
+import { useFormContext } from "react-hook-form"
 
-import { Badge } from "~/components/ui/Badge";
-import { Checkbox } from "~/components/ui/Form";
-import { Skeleton } from "~/components/ui/Skeleton";
-import { ProjectAvatar } from "~/features/projects/components/ProjectAvatar";
-import { useMetadata } from "~/hooks/useMetadata";
-import { formatDate } from "~/utils/time";
+import { Badge } from "~/components/ui/Badge"
+import { Checkbox } from "~/components/ui/Form"
+import { Skeleton } from "~/components/ui/Skeleton"
+import { ProjectAvatar } from "~/features/projects/components/ProjectAvatar"
+import { useMetadata } from "~/hooks/useMetadata"
+import { formatDate } from "~/utils/time"
 
-import type { Application } from "~/features/applications/types";
-import type { Attestation } from "~/utils/types";
+import type { Application } from "~/features/applications/types"
+import type { Attestation } from "~/utils/types"
 
 export interface IApplicationItemProps extends Attestation {
-  isApproved?: boolean;
-  isLoading?: boolean;
+  isApproved?: boolean
+  isLoading?: boolean
 }
 
 export const ApplicationItem = ({
@@ -26,11 +26,11 @@ export const ApplicationItem = ({
   isApproved = false,
   isLoading = false,
 }: IApplicationItemProps): JSX.Element => {
-  const metadata = useMetadata<Application>(metadataPtr);
+  const metadata = useMetadata<Application>(metadataPtr)
 
-  const form = useFormContext();
+  const form = useFormContext()
 
-  const { fundingSources = [], profileImageUrl } = metadata.data ?? {};
+  const { profileImageUrl } = metadata.data ?? {}
 
   return (
     <Link href={`/projects/${id}`} target="_blank">
@@ -46,10 +46,6 @@ export const ApplicationItem = ({
             <Skeleton className="mb-1 min-h-5 min-w-24" isLoading={isLoading}>
               <span className="uppercase">{name}</span>
             </Skeleton>
-
-            <div className="text-sm text-gray-400">
-              <div>{fundingSources.length} funding sources</div>
-            </div>
           </div>
         </div>
 
@@ -68,5 +64,5 @@ export const ApplicationItem = ({
         </div>
       </div>
     </Link>
-  );
-};
+  )
+}

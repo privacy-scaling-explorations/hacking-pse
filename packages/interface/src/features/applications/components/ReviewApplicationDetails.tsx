@@ -1,22 +1,22 @@
-import clsx from "clsx";
-import { useMemo, type ReactNode } from "react";
-import { useFormContext } from "react-hook-form";
+import clsx from "clsx"
+import { useMemo, type ReactNode } from "react"
+import { useFormContext } from "react-hook-form"
 
-import { Heading } from "~/components/ui/Heading";
-import { Tag } from "~/components/ui/Tag";
+import { Heading } from "~/components/ui/Heading"
+import { Tag } from "~/components/ui/Tag"
 
-import type { Application } from "../types";
+import type { Application } from "../types"
 
-import { LinkField } from "./LinkField";
+import { LinkField } from "./LinkField"
 
 interface IValueFieldProps {
-  title: string;
-  body?: ReactNode;
-  required?: boolean;
+  title: string
+  body?: ReactNode
+  required?: boolean
 }
 
 const ValueField = ({ title, body = undefined, required = false }: IValueFieldProps): JSX.Element => {
-  const emptyPlaceholder = "(empty)";
+  const emptyPlaceholder = "(empty)"
 
   return (
     <div className="flex flex-col gap-2 text-sm">
@@ -32,13 +32,13 @@ const ValueField = ({ title, body = undefined, required = false }: IValueFieldPr
         {((typeof body === "string" && body.length > 0) || typeof body !== "string") && body}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export const ReviewApplicationDetails = (): JSX.Element => {
-  const form = useFormContext<Application>();
+  const form = useFormContext<Application>()
 
-  const application = useMemo(() => form.getValues(), [form]);
+  const application = useMemo(() => form.getValues(), [form])
 
   return (
     <div className="flex flex-col gap-8">
@@ -57,12 +57,6 @@ export const ReviewApplicationDetails = (): JSX.Element => {
 
         <div className="grid grid-flow-row grid-cols-2 gap-4">
           <ValueField required body={application.websiteUrl} title="Website" />
-
-          <ValueField required body={application.payoutAddress} title="Payout address" />
-
-          <ValueField body={application.twitter} title="X(Twitter)" />
-
-          <ValueField body={application.github} title="Github" />
         </div>
 
         <div className="flex gap-6">
@@ -98,27 +92,12 @@ export const ReviewApplicationDetails = (): JSX.Element => {
         <ValueField required body={application.impactDescription} title="Impact description" />
 
         <ValueField
-          required
-          body={application.impactCategory?.map((tag) => (
-            <Tag key={tag} selected size="sm">
-              {tag}
-            </Tag>
-          ))}
-          title="Impact categories"
-        />
-
-        <ValueField
           body={application.contributionLinks?.map((link) => (
             <LinkField key={link.description} contributionLink={link} />
           ))}
           title="Contribution links"
         />
-
-        <ValueField
-          body={application.fundingSources?.map((link) => <LinkField key={link.description} fundingSource={link} />)}
-          title="Funding sources"
-        />
       </div>
     </div>
-  );
-};
+  )
+}
