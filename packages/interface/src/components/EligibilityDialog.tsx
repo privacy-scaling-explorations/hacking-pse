@@ -115,18 +115,6 @@ export const EligibilityDialog = (): JSX.Element | null => {
     );
   }
 
-  if (appState === EAppState.VOTING && !isEligibleToVote) {
-    return (
-      <Dialog
-        description="To participate in this round, you must be in the voter's registry. Contact the round organizers to get access as a voter."
-        isOpen={openDialog}
-        size="sm"
-        title="Sorry, this account does not have the credentials to be verified."
-        onOpenChange={handleCloseDialog}
-      />
-    );
-  }
-
   if (appState === EAppState.TALLYING) {
     return (
       <Dialog
