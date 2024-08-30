@@ -23,7 +23,7 @@ export const JoinButton = (): JSX.Element => {
 
       {(appState === EAppState.APPLICATION || appState === EAppState.VOTING) && !isEligibleToVote && !isRegistered &&  (
         <Button variant={isRegistered === undefined || isLoading ? "disabled" : "primary"}>
-          <Link href="/signup/registerEmail">Register</Link>
+          <Link href="/signup/register">Register</Link>
         </Button>
       )}
 

@@ -47,14 +47,14 @@ export const EligibilityDialog = (): JSX.Element | null => {
   }, [router]);
 
   const handleGoToRegister = useCallback(() => {
-    router.push("/signup/registerEmail");
+    router.push("/signup/register");
   }, [router]);
 
   if (
     (appState === EAppState.APPLICATION || appState === EAppState.VOTING) &&
     !isEligibleToVote &&
     !isRegistered &&
-    !pathname.includes("signup/registerEmail")
+    !pathname.includes("signup/register")
   ) {
     return (
       <Dialog
@@ -104,8 +104,8 @@ export const EligibilityDialog = (): JSX.Element | null => {
             <p>You have X voice credits to vote with.</p>
 
             <p>
-              Get started by adding projects to your ballot, then adding the amount of votes you want to allocate to
-              each one.
+              Get started by adding projects to your ballot, then adding the
+              amount of votes you want to allocate to each one.
             </p>
 
             <p>Please submit your ballot by X date!</p>
