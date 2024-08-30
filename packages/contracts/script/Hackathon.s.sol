@@ -8,11 +8,11 @@ import { SemaphoreVerifier } from "@semaphore-protocol/contracts/base/SemaphoreV
 import { ISemaphoreVerifier } from "@semaphore-protocol/contracts/interfaces/ISemaphoreVerifier.sol";
 import { Semaphore } from "../src/Semaphore.sol";
 
-contract Deploy is Script {
+contract DeploySemaphore_AndSetGate is Script {
     // @todo needs the correct HatsProtocol address.
     // See https://book.getfoundry.sh/tutorials/solidity-scripting for deploy.
-    address public HATS_ADDRESS = address(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137);
-    uint256[] public CRITERION_HATS = [53920304710440609890844568916334900684900534529047553357173057650688];
+    address public HATS_ADDRESS = vm.envAddress("HATS_ADDRESS");
+    uint256[] public CRITERION_HATS = [vm.envUint("HAT_ID")];
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
