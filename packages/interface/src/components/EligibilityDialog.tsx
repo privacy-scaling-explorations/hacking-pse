@@ -13,8 +13,13 @@ export const EligibilityDialog = (): JSX.Element | null => {
   const { address } = useSmartAccount();
 
   const [openDialog, setOpenDialog] = useState<boolean>(!!address);
+  const [pathname, setPathname] = useState("");
   const { onSignup, isEligibleToVote, isRegistered } = useMaci();
   const router = useRouter();
+
+  useEffect(() => {
+    setPathname(window.location.pathname);
+  }, []);
 
   const appState = useAppState();
 
@@ -40,6 +45,34 @@ export const EligibilityDialog = (): JSX.Element | null => {
   const handleGoToCreateApp = useCallback(() => {
     router.push("/applications/new");
   }, [router]);
+
+  const handleGoToRegister = useCallback(() => {
+    router.push("/signup/registerEmail");
+  }, [router]);
+
+  if (
+    (appState === EAppState.APPLICATION || appState === EAppState.VOTING) &&
+    !isEligibleToVote &&
+    !isRegistered &&
+    !pathname.includes("signup/registerEmail")
+  ) {
+    return (
+      <Dialog
+        button="secondary"
+        buttonAction={handleGoToRegister}
+        buttonName="Register"
+        description={
+          <div className="flex flex-col gap-4">
+            <p>Register with your email address to get started</p>
+          </div>
+        }
+        isOpen={openDialog}
+        size="sm"
+        title="Register now"
+        onOpenChange={handleCloseDialog}
+      />
+    );
+  }
 
   if (appState === EAppState.APPLICATION && isEligibleToVote) {
     return (
