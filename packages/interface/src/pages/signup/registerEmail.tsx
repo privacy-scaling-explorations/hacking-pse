@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { Address, encodeAbiParameters, parseAbiParameters } from "viem";
 import { publicClient } from "~/utils/permissionless";
@@ -24,6 +25,7 @@ import useSmartAccount from "~/hooks/useSmartAccount";
 import { getSemaphoreProof } from "~/utils/semaphore";
 import { useMaci } from "~/contexts/Maci";
 import { useEthersSigner } from "~/hooks/useEthersSigner";
+import { Spinner } from "~/components/ui/Spinner";
 
 const RegisterEmail = (): JSX.Element => {
   const { address, smartAccount, smartAccountClient } = useSmartAccount();
@@ -32,9 +34,11 @@ const RegisterEmail = (): JSX.Element => {
   const router = useRouter();
 
   const [emailField, setEmail] = useState<EmailField>();
+  const [loading, setLoading] = useState(false);
 
   const registerEmail = async (emailField: EmailField) => {
     try {
+      setLoading(true);
       const response = await fetch(`${config.backendUrl}/send-otp`, {
         method: "POST",
         headers: {
@@ -42,29 +46,35 @@ const RegisterEmail = (): JSX.Element => {
         },
         body: JSON.stringify(emailField),
       });
+      const json = await response.json();
 
       if (!response.ok) {
         console.log(response.status);
-        console.log(await response.json());
+        console.error(json);
+        toast.error((json.errors && json.errors[0]) ?? json.message);
       } else {
         setEmail(emailField);
-        console.log("OTP has been sent to ", emailField.email);
+        toast.success(`OTP has been sent to ${emailField.email}`);
       }
+
+      setLoading(false);
     } catch (error: any) {
+      setLoading(false);
       console.error(error);
+      toast.error("An unexpected error occured registering your email");
     }
   };
 
   const verifyOtp = async (otpField: OtpField) => {
-    console.log("Verifying OTP: ", otpField.otp);
-    if (!address) {
-      throw new Error("Smart account does not exist");
-    }
-
-    const { email: email } = emailField!; // the component that can call this function only renders when the email exists
-    const { otp: otp } = otpField;
-
     try {
+      setLoading(true);
+      if (!address) {
+        throw new Error("Smart account does not exist");
+      }
+
+      const { email: email } = emailField!; // the component that can call this function only renders when the email exists
+      const { otp: otp } = otpField;
+
       const response = await fetch(`${config.backendUrl}/verify-otp`, {
         method: "POST",
         headers: {
@@ -76,22 +86,27 @@ const RegisterEmail = (): JSX.Element => {
           address,
         }),
       });
+      const json = await response.json();
 
       if (!response.ok) {
         console.log(response.status);
-        console.log(await response.json());
+        console.error(json);
+        toast.error((json.errors && json.errors[0]) ?? json.message);
       } else {
+        toast.success("OTP verified - now joining Semaphore group");
         await joinSemaphoreGroup();
         router.push("/signup");
       }
+
+      setLoading(false);
     } catch (error: any) {
+      setLoading(false);
       console.error(error);
+      toast.error("An unexpected error occured verifying the OTP");
     }
   };
 
   const joinSemaphoreGroup = async () => {
-    console.log("Joining Semaphore group");
-
     if (!smartAccount || !smartAccountClient) {
       throw new Error("Smart account does not exist");
     }
@@ -116,11 +131,16 @@ const RegisterEmail = (): JSX.Element => {
     const txHash = await smartAccountClient.writeContract(request);
     console.log("txHash", txHash);
 
+    // TODO: (merge-ok) come up with a better fix
+    await new Promise((resolve) => setTimeout(resolve, 20000));
+
     const proof = await getSemaphoreProof(
       signer,
       new Identity(semaphoreIdentity)
     );
     await updateEligibility(proof, address);
+
+    toast.success("Joined Semaphore group");
   };
 
   return (
@@ -170,11 +190,11 @@ const RegisterEmail = (): JSX.Element => {
               type="submit"
               variant="primary"
             >
-              Submit
+              {loading ? <Spinner className="h-6 w-6" /> : "Submit"}
             </Button>
           </FormSection>
         </Form>
-        {emailField && (
+        {emailField && address && (
           <Form schema={OtpFieldSchema} onSubmit={(otp) => verifyOtp(otp)}>
             <FormSection
               description="Please enter the one-time-password (OTP) you recieved in your email"
@@ -195,7 +215,7 @@ const RegisterEmail = (): JSX.Element => {
                 type="submit"
                 variant="primary"
               >
-                Verify OTP
+                {loading ? <Spinner className="h-6 w-6" /> : "Verify OTP"}
               </Button>
             </FormSection>
           </Form>
