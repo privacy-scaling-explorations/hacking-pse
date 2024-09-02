@@ -20,7 +20,7 @@ export interface MaciContextType {
   pollData?: IGetPollData;
   tallyData?: TallyData;
   maciPubKey?: string;
-  onSignup: (onError: () => void) => Promise<void>;
+  onSignup: (onError: () => void, onSuccess: () => void) => Promise<void>;
   onVote: (
     args: IVoteArgs[],
     onError: () => void | Promise<void>,
