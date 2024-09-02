@@ -1,11 +1,5 @@
 import { PubKey, MACI__factory as MACIFactory } from "maci-cli/sdk";
-import {
-  parseEventLogs,
-  decodeEventLog,
-  Address,
-  HttpTransport,
-  Chain,
-} from "viem";
+import { parseEventLogs, Address, HttpTransport, Chain, Hex } from "viem";
 import { SmartAccountClient } from "permissionless";
 import { EntryPoint } from "permissionless/types";
 import { KernelEcdsaSmartAccount } from "permissionless/accounts";
@@ -29,7 +23,7 @@ const signUp = async (
         x: pubKey.rawPubKey[0],
         y: pubKey.rawPubKey[1],
       },
-      sgData as Address,
+      sgData as Hex,
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     ],
   });

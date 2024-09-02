@@ -63,12 +63,11 @@ const VerifyOtp = ({ emailField }: IVerifyOtpProps): JSX.Element => {
         await joinSemaphoreGroup();
         router.push("/signup");
       }
-
-      setVerifying(false);
     } catch (error: any) {
-      setVerifying(false);
       console.error(error);
       toast.error("An unexpected error occured verifying the OTP");
+    } finally {
+      setVerifying(false);
     }
   };
 
