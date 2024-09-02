@@ -42,12 +42,11 @@ const RegisterEmail = ({ setEmail }: IRegisterEmailProps): JSX.Element => {
         setEmail(emailField);
         toast.success(`OTP has been sent to ${emailField.email}`);
       }
-
-      setRegistering(false);
     } catch (error: any) {
-      setRegistering(false);
       console.error(error);
       toast.error("An unexpected error occured registering your email");
+    } finally {
+      setRegistering(false);
     }
   };
 
