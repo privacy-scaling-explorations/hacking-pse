@@ -7,6 +7,7 @@ import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
 
 import { Button } from "./ui/Button";
+import { Spinner } from "./ui/Spinner";
 
 export const JoinButton = (): JSX.Element => {
   const { isLoading, isRegistered, isEligibleToVote, onSignup } = useMaci();
@@ -29,8 +30,8 @@ export const JoinButton = (): JSX.Element => {
       )}
 
       {appState === EAppState.VOTING && isEligibleToVote && !isRegistered && (
-        <Button variant={isRegistered === undefined || isLoading ? "disabled" : "primary"} onClick={handleSignup}>
-          Voter sign up
+        <Button variant={isRegistered === undefined ? "disabled" : "primary"} onClick={handleSignup}>
+          {isLoading? <Spinner className="h-6 w-6" /> : "Voter sign up"}
         </Button>
       )}
 
