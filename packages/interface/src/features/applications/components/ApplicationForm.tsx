@@ -59,6 +59,7 @@ export const ApplicationForm = (): JSX.Element => {
       toast.error("Application create error", {
         description: err.reason ?? err.data?.message,
       })
+      console.log(err)
     },
   })
 
@@ -95,7 +96,7 @@ export const ApplicationForm = (): JSX.Element => {
 
           <div className="mb-4 gap-4 md:flex">
             <FormControl
-              required={false}
+              required
               hint="The size should be smaller than 1MB."
               label="Project avatar"
               name="profileImageUrl"
@@ -104,7 +105,7 @@ export const ApplicationForm = (): JSX.Element => {
             </FormControl>
 
             <FormControl
-              required={false}
+              required
               className="flex-1"
               hint="The size should be smaller than 1MB."
               label="Project background image"
