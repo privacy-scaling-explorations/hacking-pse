@@ -1,16 +1,16 @@
-import { FaGithub, FaEthereum } from "react-icons/fa";
-import { RiGlobalLine } from "react-icons/ri";
+import { FaGithub, FaEthereum } from "react-icons/fa"
+import { RiGlobalLine } from "react-icons/ri"
 
-import { Link } from "~/components/ui/Link";
+import { Link } from "~/components/ui/Link"
 
-import { type ImpactMetrix, type ContributionLink, type FundingSource, EContributionType } from "../types";
+import { type ImpactMetrix, type ContributionLink, type FundingSource, EContributionType } from "../types"
 
 interface ProjectDescriptionSectionProps {
-  title: string;
-  description?: string;
-  contributions?: ContributionLink[];
-  impacts?: ImpactMetrix[];
-  fundings?: FundingSource[];
+  title: string
+  description?: string
+  contributions?: ContributionLink[]
+  impacts?: ImpactMetrix[]
+  fundings?: FundingSource[]
 }
 
 export const ProjectDescriptionSection = ({
@@ -18,7 +18,6 @@ export const ProjectDescriptionSection = ({
   description = "",
   contributions = [],
   impacts = [],
-  fundings = [],
 }: ProjectDescriptionSectionProps): JSX.Element => (
   <div className="flex flex-col gap-6">
     <p className="text-lg uppercase">{title}</p>
@@ -57,22 +56,5 @@ export const ProjectDescriptionSection = ({
       </div>
     )}
 
-    {fundings.length > 0 && (
-      <div className="text-sm text-gray-400">
-        {fundings.map((funding) => (
-          <div key={funding.type} className="flex items-center gap-2">
-            {funding.description}
-
-            <div className="h-0.5 w-8 bg-blue-400" />
-
-            <p className="capitalize">{funding.type.split("_").join(" ").toLowerCase()}</p>
-
-            <p>{funding.amount}</p>
-
-            <p>{funding.currency}</p>
-          </div>
-        ))}
-      </div>
-    )}
   </div>
-);
+)

@@ -1,14 +1,14 @@
-import { useMemo, useCallback, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useMemo, useCallback, useState } from "react"
+import { useFormContext } from "react-hook-form"
 
-import { Button, IconButton } from "~/components/ui/Button";
-import { Dialog } from "~/components/ui/Dialog";
-import { Spinner } from "~/components/ui/Spinner";
-import { useIsCorrectNetwork } from "~/hooks/useIsCorrectNetwork";
+import { Button, IconButton } from "~/components/ui/Button"
+import { Dialog } from "~/components/ui/Dialog"
+import { Spinner } from "~/components/ui/Spinner"
+import { useIsCorrectNetwork } from "~/hooks/useIsCorrectNetwork"
 
-import type { Application } from "../types";
-import type { ImpactMetrix, ContributionLink, FundingSource } from "~/features/projects/types";
-import useSmartAccount from "~/hooks/useSmartAccount";
+import type { Application } from "../types"
+import type { ImpactMetrix, ContributionLink, FundingSource } from "~/features/projects/types"
+import useSmartAccount from "~/hooks/useSmartAccount"
 
 export enum EApplicationStep {
   PROFILE,
@@ -17,11 +17,11 @@ export enum EApplicationStep {
 }
 
 interface IApplicationButtonsProps {
-  step: EApplicationStep;
-  isUploading: boolean;
-  isPending: boolean;
-  onNextStep: () => void;
-  onBackStep: () => void;
+  step: EApplicationStep
+  isUploading: boolean
+  isPending: boolean
+  onNextStep: () => void
+  onBackStep: () => void
 }
 
 export const ApplicationButtons = ({
@@ -31,99 +31,87 @@ export const ApplicationButtons = ({
   onNextStep,
   onBackStep,
 }: IApplicationButtonsProps): JSX.Element => {
-  const { isCorrectNetwork } = useIsCorrectNetwork();
+  const { isCorrectNetwork } = useIsCorrectNetwork()
 
-  const { address } = useSmartAccount();
+  const { address } = useSmartAccount()
 
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false)
 
-  const form = useFormContext<Application>();
+  const form = useFormContext<Application>()
 
   const [
     name,
     bio,
-    payoutAddress,
     websiteUrl,
     profileImageUrl,
     bannerImageUrl,
     contributionDescription,
     impactDescription,
-    impactCategory,
-    contributionLinks,
-    fundingSources,
+    contributionLinks
   ] = useMemo(
     () =>
       form.watch([
         "name",
         "bio",
-        "payoutAddress",
         "websiteUrl",
         "profileImageUrl",
         "bannerImageUrl",
         "contributionDescription",
         "impactDescription",
-        "impactCategory",
-        "contributionLinks",
-        "fundingSources",
+        "contributionLinks"
       ]),
     [form],
-  );
+  )
 
   const checkLinks = (
     links: Pick<ContributionLink | ImpactMetrix | FundingSource, "description">[] | undefined,
   ): boolean =>
-    links === undefined || links.every((link) => link.description !== undefined && link.description.length > 0);
+    links === undefined || links.every((link) => link.description !== undefined && link.description.length > 0)
 
   const checkStepComplete = (): boolean => {
     if (step === EApplicationStep.PROFILE) {
       return (
-        bannerImageUrl !== undefined &&
-        profileImageUrl !== undefined &&
         bio.length > 0 &&
         name.length > 0 &&
-        payoutAddress.length > 0 &&
         websiteUrl.length > 0
-      );
+      )
     }
 
     if (step === EApplicationStep.ADVANCED) {
       return (
-        impactCategory !== undefined &&
-        impactCategory.length > 0 &&
         contributionDescription.length > 0 &&
         impactDescription.length > 0 &&
-        checkLinks(contributionLinks) &&
-        checkLinks(fundingSources)
-      );
+        checkLinks(contributionLinks)
+      )
     }
 
-    return true;
-  };
+    return true
+  }
 
   const handleOnClickNextStep = useCallback(
     (event: UIEvent) => {
-      event.preventDefault();
+      event.preventDefault()
 
       if (checkStepComplete()) {
-        onNextStep();
+        onNextStep()
       } else {
-        setShowDialog(true);
+        setShowDialog(true)
       }
     },
     [onNextStep, setShowDialog, checkStepComplete],
-  );
+  )
 
   const handleOnClickBackStep = useCallback(
     (event: UIEvent) => {
-      event.preventDefault();
-      onBackStep();
+      event.preventDefault()
+      onBackStep()
     },
     [onBackStep],
-  );
+  )
 
   const handleOnOpenChange = useCallback(() => {
-    setShowDialog(false);
-  }, [setShowDialog]);
+    setShowDialog(false)
+  }, [setShowDialog])
 
   return (
     <div className="flex justify-end gap-2">
@@ -160,5 +148,5 @@ export const ApplicationButtons = ({
         </IconButton>
       )}
     </div>
-  );
-};
+  )
+}
