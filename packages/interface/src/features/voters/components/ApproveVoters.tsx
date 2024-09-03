@@ -41,7 +41,7 @@ const ApproveButton = ({ isLoading = false, isAdmin = false }: IApproveButtonPro
       disabled={!selectedCount || !isAdmin || isLoading}
       icon={isLoading ? Spinner : UserRoundPlus}
       type="submit"
-      variant="primary"
+      variant="secondary"
     >
       {isAdmin ? `Approve ${selectedCount} voters` : "You must be an admin"}
     </IconButton>
@@ -71,7 +71,7 @@ const ApproveVoters = () => {
       <IconButton
         disabled={!isAdmin || !isCorrectNetwork}
         icon={UserRoundPlus}
-        variant="primary"
+        variant="secondary"
         onClick={() => {
           setOpen(true);
         }}

@@ -142,7 +142,7 @@ export const ApplicationButtons = ({
       )}
 
       {step !== EApplicationStep.REVIEW && (
-        <Button size="auto" variant="primary" onClick={handleOnClickNextStep}>
+        <Button size="auto" variant="secondary" onClick={handleOnClickNextStep}>
           Next
         </Button>
       )}
@@ -154,7 +154,7 @@ export const ApplicationButtons = ({
           isLoading={isPending}
           size="auto"
           type="submit"
-          variant="primary"
+          variant="secondary"
         >
           {isUploading ? "Uploading metadata" : "Submit"}
         </IconButton>

@@ -87,7 +87,7 @@ export const ApplicationsToApprove = (): JSX.Element => {
 
           {!applications.isLoading && !applications.data?.length ? (
             <EmptyState title="No applications">
-              <Button as={Link} href="/applications/new" variant="primary">
+              <Button as={Link} href="/applications/new" variant="secondary">
                 Go to create application
               </Button>
             </EmptyState>

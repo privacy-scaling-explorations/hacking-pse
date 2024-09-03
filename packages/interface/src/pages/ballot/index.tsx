@@ -46,7 +46,7 @@ const ClearBallot = (): JSX.Element | null => {
       </button>
 
       <Dialog
-        button="primary"
+        button="secondary"
         buttonAction={handleClearBallot}
         buttonName="Yes, Clear my ballot"
         description="This will empty your ballot and remove all the projects you have added."
@@ -71,7 +71,7 @@ const EmptyBallot = (): JSX.Element => (
       </p>
 
       <div className="flex items-center justify-center gap-3">
-        <Button as={Link} href="/projects" size="auto" variant="primary">
+        <Button as={Link} href="/projects" size="auto" variant="secondary">
           View projects
         </Button>
       </div>

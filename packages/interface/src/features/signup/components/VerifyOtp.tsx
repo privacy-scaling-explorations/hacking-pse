@@ -109,30 +109,32 @@ const VerifyOtp = ({ emailField }: IVerifyOtpProps): JSX.Element => {
   };
 
   return (
-    <Form schema={OtpFieldSchema} onSubmit={(otp) => verifyOtp(otp)}>
-      <FormSection
-        description="Please enter the one-time-password (OTP) you recieved in your email"
-        title="Enter OTP"
-      >
-        <FormControl
-          required
-          valueAsNumber
-          hint="Check your 'pse.dev' inbox for the OTP"
-          label="OTP"
-          name="otp"
+    <div className="w-72 sm:w-96">
+      <Form schema={OtpFieldSchema} onSubmit={(otp) => verifyOtp(otp)}>
+        <FormSection
+          description="Please enter the one-time-password (OTP) you recieved in your email"
+          title="Enter OTP"
         >
-          <Input placeholder="1234" type="number" />
-        </FormControl>
-        <Button
-          suppressHydrationWarning
-          size="auto"
-          type="submit"
-          variant="primary"
-        >
-          {verifying ? <Spinner className="h-6 w-6" /> : "Verify OTP"}
-        </Button>
-      </FormSection>
-    </Form>
+          <FormControl
+            required
+            valueAsNumber
+            hint="Check your 'pse.dev' inbox for the OTP"
+            label="OTP"
+            name="otp"
+          >
+            <Input placeholder="1234" type="number" />
+          </FormControl>
+          <Button
+            suppressHydrationWarning
+            size="auto"
+            type="submit"
+            variant="secondary"
+          >
+            {verifying ? <Spinner className="h-6 w-6" /> : "Verify OTP"}
+          </Button>
+        </FormSection>
+      </Form>
+    </div>
   );
 };
 

@@ -45,13 +45,13 @@ const SignupPage = (): JSX.Element => {
         </p>
 
         {address && isEligibleToVote && appState === EAppState.APPLICATION && (
-          <Button size="auto" variant="primary">
+          <Button size="auto" variant="secondary">
             <Link href="/applications/new">Start Application</Link>
           </Button>
         )}
 
         {address && isRegistered && appState === EAppState.VOTING && (
-          <Button size="auto" variant="primary">
+          <Button size="auto" variant="secondary">
             <Link href="/projects">View projects</Link>
           </Button>
         )}

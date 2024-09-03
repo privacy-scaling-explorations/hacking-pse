@@ -9,6 +9,11 @@ import { Button } from "~/components/ui/Button";
 import { Spinner } from "~/components/ui/Spinner";
 
 interface IRegisterEmailProps {
+  emailField:
+    | {
+        email: string;
+      }
+    | undefined;
   setEmail: Dispatch<
     SetStateAction<
       | {
@@ -19,7 +24,10 @@ interface IRegisterEmailProps {
   >;
 }
 
-const RegisterEmail = ({ setEmail }: IRegisterEmailProps): JSX.Element => {
+const RegisterEmail = ({
+  emailField,
+  setEmail,
+}: IRegisterEmailProps): JSX.Element => {
   const [registering, setRegistering] = useState(false);
 
   const registerEmail = async (emailField: EmailField) => {
@@ -51,29 +59,34 @@ const RegisterEmail = ({ setEmail }: IRegisterEmailProps): JSX.Element => {
   };
 
   return (
-    <Form schema={EmailFieldSchema} onSubmit={(email) => registerEmail(email)}>
-      <FormSection
-        description="Please register with your 'pse.dev' email."
-        title="Register"
+    <div className="w-72 sm:w-96">
+      <Form
+        schema={EmailFieldSchema}
+        onSubmit={(email) => registerEmail(email)}
       >
-        <FormControl
-          required
-          hint="This is your 'pse.dev' email address"
-          label="Email address"
-          name="email"
+        <FormSection
+          description="Please register with your 'pse.dev' email."
+          title="Register"
         >
-          <Input placeholder="bob@pse.dev" />
-        </FormControl>
-        <Button
-          suppressHydrationWarning
-          size="auto"
-          type="submit"
-          variant="primary"
-        >
-          {registering ? <Spinner className="h-6 w-6" /> : "Submit"}
-        </Button>
-      </FormSection>
-    </Form>
+          <FormControl
+            required
+            hint="This is your 'pse.dev' email address"
+            label="Email address"
+            name="email"
+          >
+            <Input placeholder="bob@pse.dev" />
+          </FormControl>
+          <Button
+            suppressHydrationWarning
+            size="auto"
+            type="submit"
+            variant={emailField ? "disabled" : "secondary"}
+          >
+            {registering ? <Spinner className="h-6 w-6" /> : "Submit"}
+          </Button>
+        </FormSection>
+      </Form>
+    </div>
   );
 };
 
