@@ -93,6 +93,9 @@ app.post('/verify-otp', async (req, res) => {
             throw new Error('Transaction to mint hat reverted')
         }
     } catch (error) {
+        if (error instanceof Error) {
+            return res.status(500).json({ message: error.message })
+        }
         return res.status(500).json({ message: 'Failed to mint hat' })
     }
 

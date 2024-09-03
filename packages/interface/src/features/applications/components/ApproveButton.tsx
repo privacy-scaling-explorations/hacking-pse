@@ -24,7 +24,7 @@ export const ApproveButton = ({ isLoading = false }: IApproveButtonProps): JSX.E
       disabled={!selectedCount || !isAdmin || isLoading || !isCorrectNetwork}
       size="auto"
       type="submit"
-      variant="primary"
+      variant="secondary"
     >
       {!isCorrectNetwork ? `Connect to ${correctNetwork.name}` : text}
     </Button>

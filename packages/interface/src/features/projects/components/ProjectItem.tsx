@@ -69,7 +69,7 @@ export const ProjectItem = ({
               )}
 
               {state === EProjectState.ADDED && (
-                <Button size="sm" variant="primary" onClick={action}>
+                <Button size="sm" variant="secondary" onClick={action}>
                   Added
                   <Image alt="check-white" height="18" src="check-white.svg" width="18" />
                 </Button>

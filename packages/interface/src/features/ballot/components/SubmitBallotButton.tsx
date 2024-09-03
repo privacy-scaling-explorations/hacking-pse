@@ -50,12 +50,12 @@ export const SubmitBallotButton = (): JSX.Element => {
 
   return (
     <>
-      <Button variant={ableToSubmit ? "primary" : "disabled"} onClick={handleOpenDialog}>
+      <Button variant={ableToSubmit ? "secondary" : "disabled"} onClick={handleOpenDialog}>
         {ableToSubmit ? "submit your ballot" : "Exceed initial voice credits"}
       </Button>
 
       <Dialog
-        button="primary"
+        button="secondary"
         buttonAction={handleSubmitBallot}
         buttonName="submit"
         description="This is not the final submission. Once you submit your ballot, you can change it during the voting period."

@@ -109,6 +109,9 @@ From the root of this repo
 2. `pnpm dev:server`
 3. `pnpm dev:interface`
 
+### Deploy a poll
+1. in the maci repo, run `pnpm deploy-poll:optimism-sepolia`
+
 ## Supported Networks
 
 All networks EAS is deployed to are supported. If a network is not supported, you can follow the EAS documentation to deploy the contracts to the network.

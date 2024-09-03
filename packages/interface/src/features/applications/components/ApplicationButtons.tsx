@@ -68,7 +68,7 @@ export const ApplicationButtons = ({
   ): boolean =>
     links === undefined || links.every((link) => link.description !== undefined && link.description.length > 0)
 
-  const stepComplete = useMemo((): boolean => {
+  const checkStepComplete = (): boolean => {
     if (step === EApplicationStep.PROFILE) {
       return (
         bio.length > 0 &&
@@ -86,29 +86,19 @@ export const ApplicationButtons = ({
     }
 
     return true
-  }, [
-    step,
-    bannerImageUrl,
-    profileImageUrl,
-    bio,
-    name,
-    websiteUrl,
-    contributionDescription,
-    impactDescription,
-    contributionLinks
-  ])
+  }
 
   const handleOnClickNextStep = useCallback(
     (event: UIEvent) => {
       event.preventDefault()
 
-      if (stepComplete) {
+      if (checkStepComplete()) {
         onNextStep()
       } else {
         setShowDialog(true)
       }
     },
-    [onNextStep, setShowDialog, stepComplete],
+    [onNextStep, setShowDialog, checkStepComplete],
   )
 
   const handleOnClickBackStep = useCallback(
@@ -140,7 +130,7 @@ export const ApplicationButtons = ({
       )}
 
       {step !== EApplicationStep.REVIEW && (
-        <Button size="auto" variant="primary" onClick={handleOnClickNextStep}>
+        <Button size="auto" variant="secondary" onClick={handleOnClickNextStep}>
           Next
         </Button>
       )}
@@ -152,7 +142,7 @@ export const ApplicationButtons = ({
           isLoading={isPending}
           size="auto"
           type="submit"
-          variant="primary"
+          variant="secondary"
         >
           {isUploading ? "Uploading metadata" : "Submit"}
         </IconButton>

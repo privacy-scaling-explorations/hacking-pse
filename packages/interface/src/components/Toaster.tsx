@@ -17,6 +17,7 @@ export const Toaster = (): JSX.Element => {
           title: "font-bold tracking-wider -mt-1",
           description: "text-sm",
         },
+        duration: 8000,
       }}
     />
   );

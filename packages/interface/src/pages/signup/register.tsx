@@ -1,23 +1,20 @@
+import { useState } from "react";
 import { format } from "date-fns";
-import Link from "next/link";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
-import { Info } from "~/components/Info";
-import { JoinButton } from "~/components/JoinButton";
-import { Button } from "~/components/ui/Button";
 import { Heading } from "~/components/ui/Heading";
 import { config } from "~/config";
-import { useMaci } from "~/contexts/Maci";
 import { FAQList } from "~/features/signup/components/FaqList";
-import useSmartAccount from "~/hooks/useSmartAccount";
 import { Layout } from "~/layouts/DefaultLayout";
-import { useAppState } from "~/utils/state";
-import { EAppState } from "~/utils/types";
+import { EmailField } from "../../features/signup/types";
+import VerifyOtp from "~/features/signup/components/VerifyOtp";
+import RegisterEmail from "~/features/signup/components/RegisterEmail";
+import useSmartAccount from "~/hooks/useSmartAccount";
 
-const SignupPage = (): JSX.Element => {
-  const { isRegistered, isEligibleToVote } = useMaci();
+const Register = (): JSX.Element => {
   const { address } = useSmartAccount();
-  const appState = useAppState();
+
+  const [emailField, setEmail] = useState<EmailField>();
 
   return (
     <Layout type="home">
@@ -44,23 +41,9 @@ const SignupPage = (): JSX.Element => {
           </span>
         </p>
 
-        {address && isEligibleToVote && appState === EAppState.APPLICATION && (
-          <Button size="auto" variant="secondary">
-            <Link href="/applications/new">Start Application</Link>
-          </Button>
-        )}
+        <RegisterEmail emailField={emailField} setEmail={setEmail} />
 
-        {address && isRegistered && appState === EAppState.VOTING && (
-          <Button size="auto" variant="secondary">
-            <Link href="/projects">View projects</Link>
-          </Button>
-        )}
-
-        {address && !isRegistered && <JoinButton />}
-
-        <div className="my-8">
-          <Info size="default" />
-        </div>
+        {emailField && address && <VerifyOtp emailField={emailField} />}
       </div>
 
       <FAQList />
@@ -68,4 +51,4 @@ const SignupPage = (): JSX.Element => {
   );
 };
 
-export default SignupPage;
+export default Register;

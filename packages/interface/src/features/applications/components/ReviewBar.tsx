@@ -74,7 +74,7 @@ export const ReviewBar = ({ projectId }: IReviewBarProps): JSX.Element => {
 
       {isAdmin && !approved && (
         <div className="my-3 flex justify-end gap-2">
-          <Button suppressHydrationWarning disabled={!isCorrectNetwork} size="auto" variant="primary" onClick={onClick}>
+          <Button suppressHydrationWarning disabled={!isCorrectNetwork} size="auto" variant="secondary" onClick={onClick}>
             {approve.isPending && <Spinner className="mr-2 h-4 w-4" />}
 
             {!approve.isPending && !isCorrectNetwork ? `Connect to ${correctNetwork.name}` : "Approve application"}

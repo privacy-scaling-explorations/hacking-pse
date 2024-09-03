@@ -109,6 +109,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
     switch (gatekeeperTrait) {
       case GatekeeperTrait.Semaphore:
         if (!signer || !semaphoreIdentity) {
+          setIsLoading(false);
           return;
         }
         getSemaphoreProof(signer, semaphoreIdentity)
@@ -126,6 +127,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         break;
       case GatekeeperTrait.Hats:
         if (!signer) {
+          setIsLoading(false);
           return;
         }
         getHatsSingleGatekeeperData({
@@ -146,8 +148,10 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         setIsLoading(false);
         break;
       default:
+        setIsLoading(false);
         break;
     }
+
   }, [gatekeeperTrait, attestationId, semaphoreIdentity, signer, isEligibleToVote]);
 
   // a user is eligible to vote if they pass certain conditions
@@ -225,7 +229,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
 
   // function to be used to signup to MACI
   const onSignup = useCallback(
-    async (onError: () => void) => {
+    async (onError: () => void, onSuccess: () => void) => {
       if (!smartAccount || !smartAccountClient || !maciPubKey || !sgData || (gatekeeperTrait && gatekeeperTrait !== GatekeeperTrait.FreeForAll && !sgData)) {
         return;
       }
@@ -243,6 +247,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         onError();
         console.error("signup error:", e);
       } finally {
+        onSuccess();
         setIsLoading(false);
       }
     },

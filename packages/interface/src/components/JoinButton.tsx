@@ -7,13 +7,15 @@ import { useAppState } from "~/utils/state";
 import { EAppState } from "~/utils/types";
 
 import { Button } from "./ui/Button";
+import { Spinner } from "./ui/Spinner";
 
 export const JoinButton = (): JSX.Element => {
   const { isLoading, isRegistered, isEligibleToVote, onSignup } = useMaci();
   const appState = useAppState();
 
   const onError = useCallback(() => toast.error("Signup error"), []);
-  const handleSignup = useCallback(() => onSignup(onError), [onSignup, onError]);
+  const onSuccess = useCallback(() => toast.success("You've successfully signed up to vote!"), []);
+  const handleSignup = useCallback(() => onSignup(onError, onSuccess), [onSignup, onError, onSuccess]);
 
   return (
     <div>
@@ -22,14 +24,14 @@ export const JoinButton = (): JSX.Element => {
       )}
 
       {(appState === EAppState.APPLICATION || appState === EAppState.VOTING) && !isEligibleToVote && !isRegistered &&  (
-        <Button variant={isRegistered === undefined || isLoading ? "disabled" : "primary"}>
-          <Link href="/signup/registerEmail">Register</Link>
+        <Button variant={isRegistered === undefined || isLoading ? "disabled" : "secondary"}>
+          <Link href="/signup/register">Register</Link>
         </Button>
       )}
 
       {appState === EAppState.VOTING && isEligibleToVote && !isRegistered && (
-        <Button variant={isRegistered === undefined || isLoading ? "disabled" : "primary"} onClick={handleSignup}>
-          Voter sign up
+        <Button variant={isRegistered === undefined ? "disabled" : "secondary"} onClick={handleSignup}>
+          {isLoading? <Spinner className="h-6 w-6" /> : "Voter sign up"}
         </Button>
       )}
 
@@ -37,7 +39,7 @@ export const JoinButton = (): JSX.Element => {
         <Button variant="disabled">Voting round is over, the result is tallying.</Button>
       )}
 
-      {appState === EAppState.RESULTS && <Button variant="primary">View results</Button>}
+      {appState === EAppState.RESULTS && <Button variant="secondary">View results</Button>}
     </div>
   );
 };
