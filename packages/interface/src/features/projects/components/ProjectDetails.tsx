@@ -1,26 +1,26 @@
-import clsx from "clsx";
-import { type ReactNode } from "react";
+import clsx from "clsx"
+import { type ReactNode } from "react"
 
-import { Heading } from "~/components/ui/Heading";
-import { Navigation } from "~/components/ui/Navigation";
-import { ProjectAvatar } from "~/features/projects/components/ProjectAvatar";
-import { ProjectBanner } from "~/features/projects/components/ProjectBanner";
-import { VotingWidget } from "~/features/projects/components/VotingWidget";
-import { useAppState } from "~/utils/state";
-import { EAppState } from "~/utils/types";
+import { Heading } from "~/components/ui/Heading"
+import { Navigation } from "~/components/ui/Navigation"
+import { ProjectAvatar } from "~/features/projects/components/ProjectAvatar"
+import { ProjectBanner } from "~/features/projects/components/ProjectBanner"
+import { VotingWidget } from "~/features/projects/components/VotingWidget"
+import { useAppState } from "~/utils/state"
+import { EAppState } from "~/utils/types"
 
-import type { Attestation } from "~/utils/types";
+import type { Attestation } from "~/utils/types"
 
-import { useProjectMetadata } from "../hooks/useProjects";
+import { useProjectMetadata } from "../hooks/useProjects"
 
-import { ProjectContacts } from "./ProjectContacts";
-import { ProjectDescriptionSection } from "./ProjectDescriptionSection";
+import { ProjectContacts } from "./ProjectContacts"
+import { ProjectDescriptionSection } from "./ProjectDescriptionSection"
 
 export interface IProjectDetailsProps {
-  action?: ReactNode;
-  projectId?: string;
-  attestation?: Attestation;
-  disabled?: boolean;
+  action?: ReactNode
+  projectId?: string
+  attestation?: Attestation
+  disabled?: boolean
 }
 
 const ProjectDetails = ({
@@ -29,12 +29,12 @@ const ProjectDetails = ({
   action = undefined,
   disabled = false,
 }: IProjectDetailsProps): JSX.Element => {
-  const metadata = useProjectMetadata(attestation?.metadataPtr);
+  const metadata = useProjectMetadata(attestation?.metadataPtr)
 
   const { bio, websiteUrl, payoutAddress, github, twitter, fundingSources, profileImageUrl, bannerImageUrl } =
-    metadata.data ?? {};
+    metadata.data ?? {}
 
-  const appState = useAppState();
+  const appState = useAppState()
 
   return (
     <div className={clsx("relative dark:text-white", disabled && "opacity-30")}>
@@ -64,25 +64,27 @@ const ProjectDetails = ({
 
       <div className="my-8 flex flex-col gap-8">
         <p className="text-xl uppercase">
-          <b>Impact statements</b>
+          <b>Project Details</b>
         </p>
-
         <ProjectDescriptionSection
           contributions={metadata.data?.contributionLinks}
+          title="Project Links"
+        />
+        <ProjectDescriptionSection
+
           description={metadata.data?.contributionDescription}
-          title="contributions"
+          title="Contributors"
         />
 
         <ProjectDescriptionSection
           description={metadata.data?.impactDescription}
-          fundings={fundingSources}
-          title="past grants and funding"
+          title="Project Impact"
         />
 
         {action}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProjectDetails;
+export default ProjectDetails
