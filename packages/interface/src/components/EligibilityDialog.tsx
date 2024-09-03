@@ -24,9 +24,10 @@ export const EligibilityDialog = (): JSX.Element | null => {
   const appState = useAppState();
 
   const onError = useCallback(() => toast.error("Signup error"), []);
+  const onSuccess = useCallback(() => toast.success("You've successfully signed up to vote!"), []);
 
   const handleSignup = useCallback(async () => {
-    await onSignup(onError, () => {});
+    await onSignup(onError, onSuccess);
     setOpenDialog(false);
   }, [onSignup, onError, setOpenDialog]);
 
@@ -54,6 +55,7 @@ export const EligibilityDialog = (): JSX.Element | null => {
     (appState === EAppState.APPLICATION || appState === EAppState.VOTING) &&
     !isEligibleToVote &&
     !isRegistered &&
+    !isLoading &&
     !pathname.includes("signup/register")
   ) {
     return (

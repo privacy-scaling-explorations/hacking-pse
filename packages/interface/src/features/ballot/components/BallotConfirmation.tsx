@@ -84,7 +84,7 @@ export const BallotConfirmation = (): JSX.Element => {
           </div>
 
           <div>
-            <Button as={Link} href="/ballot" variant="primary">
+            <Button as={Link} href="/ballot" variant="secondary">
               Edit my ballot
             </Button>
           </div>
@@ -102,7 +102,7 @@ export const BallotConfirmation = (): JSX.Element => {
         </div>
 
         <div>
-          <Button as={Link} href={feedbackUrl} target="_blank" variant="primary">
+          <Button as={Link} href={feedbackUrl} target="_blank" variant="secondary">
             Share your feedback
           </Button>
         </div>
@@ -119,7 +119,7 @@ export const BallotConfirmation = (): JSX.Element => {
         </div>
 
         <div>
-          <Button as={Link} href="https://discord.com/invite/sF5CT5rzrR" target="_blank" variant="primary">
+          <Button as={Link} href="https://discord.com/invite/sF5CT5rzrR" target="_blank" variant="secondary">
             Contact us
           </Button>
         </div>

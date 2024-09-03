@@ -41,7 +41,7 @@ const Register = (): JSX.Element => {
           </span>
         </p>
 
-        <RegisterEmail setEmail={setEmail} />
+        <RegisterEmail emailField={emailField} setEmail={setEmail} />
 
         {emailField && address && <VerifyOtp emailField={emailField} />}
       </div>

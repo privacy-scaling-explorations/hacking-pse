@@ -16,5 +16,5 @@ export const ProjectAwarded = ({ id = "" }: IProjectAwardedProps): JSX.Element |
     return null;
   }
 
-  return <Button variant="primary">{`${formatNumber(amount.data?.amount ?? 0)} ${config.tokenName}`}</Button>;
+  return <Button variant="secondary">{`${formatNumber(amount.data?.amount ?? 0)} ${config.tokenName}`}</Button>;
 };
