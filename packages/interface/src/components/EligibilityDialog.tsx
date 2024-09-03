@@ -14,7 +14,7 @@ export const EligibilityDialog = (): JSX.Element | null => {
 
   const [openDialog, setOpenDialog] = useState<boolean>(!!address);
   const [pathname, setPathname] = useState("");
-  const { onSignup, isEligibleToVote, isRegistered, initialVoiceCredits, votingEndsAt } = useMaci();
+  const { onSignup, isEligibleToVote, isRegistered, initialVoiceCredits, votingEndsAt, isLoading } = useMaci();
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const EligibilityDialog = (): JSX.Element | null => {
   const onError = useCallback(() => toast.error("Signup error"), []);
 
   const handleSignup = useCallback(async () => {
-    await onSignup(onError);
+    await onSignup(onError, () => {});
     setOpenDialog(false);
   }, [onSignup, onError, setOpenDialog]);
 
@@ -144,6 +144,7 @@ export const EligibilityDialog = (): JSX.Element | null => {
         size="sm"
         title="Account verified!"
         onOpenChange={handleCloseDialog}
+        isLoading={isLoading}
       />
     );
   }
