@@ -46,11 +46,13 @@ const easSchemaRegistryContractAddresses = {
 
 // Hats contract addresses for each chain
 const hatsContractAddresses = {
+  optimism: "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137",
   optimismSepolia: "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137",
 };
 
 // Semaphore contract addresses for each chain
 const semaphoreContractAddresses = {
+  optimism: process.env.NEXT_PUBLIC_SEMAPHORE_CONTRACT_ADDRESS!,
   optimismSepolia: process.env.NEXT_PUBLIC_SEMAPHORE_CONTRACT_ADDRESS!,
 };
 
@@ -73,6 +75,8 @@ export const semaphoreEthersChain = (): string => {
  */
 export const getRPCURL = (): string | undefined => {
   switch (process.env.NEXT_PUBLIC_CHAIN_NAME) {
+    case "optimism":
+      return `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID!}`;
     case "optimismSepolia":
       return `https://opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID!}`;
     default:
@@ -86,6 +90,8 @@ export const getRPCURL = (): string | undefined => {
  */
 export const getPimlicoRPCURL = (): string | undefined => {
   switch (process.env.NEXT_PUBLIC_CHAIN_NAME) {
+    case "optimism":
+      return `https://api.pimlico.io/v2/optimism/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`;
     case "optimismSepolia":
       return `https://api.pimlico.io/v2/optimism-sepolia/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`;
     default:
