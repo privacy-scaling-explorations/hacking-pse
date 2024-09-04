@@ -1,20 +1,22 @@
 import { createPublicClient, createWalletClient, http} from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { optimismSepolia } from "viem/chains"
 import { PRIVATE_KEY } from './constants'
+import getNetwork from './getNetwork';
 
 // create an account from the private key
 export const account = privateKeyToAccount(PRIVATE_KEY)
 
+const chain = getNetwork();
+
 // a public client for reading data
 export const publicClient = createPublicClient({
-    chain: optimismSepolia,
+    chain,
     transport: http()
 })
 
 // a wallet client for signing transactions
 export const walletClient = createWalletClient({
     account,
-    chain: optimismSepolia,
+    chain,
     transport: http()
 })

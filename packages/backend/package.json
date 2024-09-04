@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev src/index.ts"
+    "dev:optimism": "ts-node-dev src/index.ts --network optimism",
+    "dev:optimism-sepolia": "ts-node-dev src/index.ts --network optimism-sepolia"
   },
   "keywords": [],
   "author": "",

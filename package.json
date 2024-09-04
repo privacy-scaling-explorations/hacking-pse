@@ -7,7 +7,7 @@
   "author": "PSE",
   "scripts": {
     "build": "pnpm --recursive --sort run build",
-    "dev:server": "pnpm --filter backend run dev",
+    "dev:server": "pnpm --filter backend run dev:optimism-sepolia",
     "start:interface": "pnpm --filter interface run start",
     "dev:interface": "pnpm --filter interface run dev"
   },
