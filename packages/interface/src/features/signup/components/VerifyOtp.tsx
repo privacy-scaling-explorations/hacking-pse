@@ -43,6 +43,10 @@ const VerifyOtp = ({
 
   useEffect(() => {
     const getElegibility = async () => {
+      if (!address) {
+        return;
+      }
+
       const hatsClient = getHatsClient();
       const wearingHat = await hatsClient.isWearerOfHat({
         wearer: address!,
@@ -69,7 +73,7 @@ const VerifyOtp = ({
     }
 
     getElegibility().catch(console.error);
-  }, [otpVerified, setIsWearerOfHat, setIsSemaphoreMember]);
+  }, [address, otpVerified, setIsWearerOfHat, setIsSemaphoreMember]);
 
   const verifyOtp = async (otpField: OtpField) => {
     if (!address) {
