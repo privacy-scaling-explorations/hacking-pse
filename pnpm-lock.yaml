@@ -83,7 +83,7 @@ importers:
         version: 4.0.1
       '@zk-kit/excubiae':
         specifier: 0.1.0
-        version: 0.1.0(typescript@5.5.4)
+        version: 0.1.0(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4)
       '@zk-kit/lean-imt.sol':
         specifier: 2.0.0
         version: 2.0.0
@@ -131,11 +131,11 @@ importers:
         specifier: ^2.0.1
         version: 2.1.4(@tanstack/react-query@5.51.23(react@18.2.0))(@types/react@18.3.3)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4))(wagmi@2.12.5(@tanstack/query-core@5.51.21)(@tanstack/react-query@5.51.23(react@18.2.0))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react-dom@18.2.0(react@18.2.0))(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.20.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))
       '@semaphore-protocol/core':
-        specifier: 4.0.0-beta.16
-        version: 4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 4.0.3
+        version: 4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@semaphore-protocol/data':
-        specifier: 4.0.0-beta.16
-        version: 4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 4.0.3
+        version: 4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@t3-oss/env-nextjs':
         specifier: ^0.8.0
         version: 0.8.0(typescript@5.5.4)(zod@3.22.4)
@@ -2701,26 +2701,26 @@ packages:
   '@semaphore-protocol/contracts@4.0.1':
     resolution: {integrity: sha512-kQaBNNMwozFQARfj3cfNI70PRfYzJjyJJmhPwTb1QvXd04s60DX+09EVyDZLXS0sw3bFCxRjI23C77gTwoXVqA==}
 
-  '@semaphore-protocol/core@4.0.0-beta.16':
-    resolution: {integrity: sha512-LtIKjxrx6sbyE7bjKFy+qLMlpkC9vZ0atZntq6q1gNZg2PS41J5CIH35gqM6PZz/imrwlF143yQ58coYvatmyA==}
+  '@semaphore-protocol/core@4.0.3':
+    resolution: {integrity: sha512-XwFSV8B8JYOS7nXDPNSQ8Uy/Yw2MPyAhcMLToAJsu6HG8rwIG5I6F6/MKgDm4IhUJnE1h22fipoteekjBMVqSg==}
 
-  '@semaphore-protocol/data@4.0.0-beta.16':
-    resolution: {integrity: sha512-XDP+2CZuzR/YetBjKUAWV3mTIDAOJ0B1BZwgS5v1Vr/b+0I3p0KiZMpxeW959QVrT1vIEuMEKQqTHyEYqNvH9g==}
+  '@semaphore-protocol/data@4.0.3':
+    resolution: {integrity: sha512-2hnibRj6DpfX59AqODQF2b/86zeuAjlM1mXqBc/jhV5UnvCr3BIYCqdIQ+ndDXbmDAszuRmQOWZDnpYv1RA/Gw==}
 
-  '@semaphore-protocol/group@4.0.0-beta.16':
-    resolution: {integrity: sha512-pvddb+cDMiHIL7872CGim6ibMICfAUZd+Qb4CnQicbgmAbY+/TQPfrC1geOWw+FfK2Ur3HXjfSb090veb1pO/w==}
+  '@semaphore-protocol/group@4.0.3':
+    resolution: {integrity: sha512-ElxMN4vio301EJ6VjnfEpagG8KQn/Ck7BuBwpwHS7neDYcJkKYfRHCOd8OR/mg4dNVenflHkgIO8WTgCz+2n5A==}
 
-  '@semaphore-protocol/identity@4.0.0-beta.16':
-    resolution: {integrity: sha512-rnl2W66ZDUd5Mu3U3FxSyMsBa/WgfX+C8nnUwpCy45zyB+nSVeGjCWPzsG/Hnn6H3UQaP8l5Ee9FcKbdV97RnQ==}
+  '@semaphore-protocol/identity@4.0.3':
+    resolution: {integrity: sha512-IfGpE00gWnuM0c41g3rY1uU0he8X8JOrerqXjGzrsW0sXRe/jkxL/jln6zufVTGleN/mGdP9CkqXh7Ca7QjAiw==}
 
-  '@semaphore-protocol/proof@4.0.0-beta.16':
-    resolution: {integrity: sha512-v+DQP60vJnidoCW5R6Z1xlXQgND6SjldOAOUIuDic9Hxgkw9rifNNtfLx1dHFFh0H2lSE4jIGoImBzWDB+8YAg==}
+  '@semaphore-protocol/proof@4.0.3':
+    resolution: {integrity: sha512-egqXei3IEPNKHUxd3/9AbI/1z1nrp1DA5DtzdHI36m1RP0GOE/k4gpwaSGQQqqbUuuGYYnrZZj7bmhphfAy43A==}
     peerDependencies:
-      '@semaphore-protocol/group': 4.0.0-beta.16
-      '@semaphore-protocol/identity': 4.0.0-beta.16
+      '@semaphore-protocol/group': 4.0.3
+      '@semaphore-protocol/identity': 4.0.3
 
-  '@semaphore-protocol/utils@4.0.0-beta.16':
-    resolution: {integrity: sha512-QS7cqEVHKpyc7b6TXcAiZYR2AIKWNw/aNEhOSMEB/ApuYJCoOXeThiVc/jSffFwPtW/RoRNdPr9jguoPa261Qg==}
+  '@semaphore-protocol/utils@4.0.3':
+    resolution: {integrity: sha512-IMyL8C68fHbe5h1QyfZxfxDlxmB1e0TLkBKnEJHnTsNW7nKpzJNAPjcloQ/bbLwWj7SsaeOu+eMQCDPmqSzbQw==}
 
   '@sentry/core@5.30.0':
     resolution: {integrity: sha512-TmfrII8w1PQZSZgPpUESqjB+jC6MvZJZdLtE/0hZ+SrnKhW3x5WlYLvTXZpcWePYBku7rl2wn1RZu6uT0qCTeg==}
@@ -3579,8 +3579,8 @@ packages:
   '@zk-kit/lean-imt.sol@2.0.0':
     resolution: {integrity: sha512-e9pAm+IXveLPy7b1h05ipIo6U44vp8g/2E+Ocx3PIloMu7lgTXFkIeZj/qZ/iLgEMsF74T0dsg7aVIT0B0nsDA==}
 
-  '@zk-kit/lean-imt@2.0.1':
-    resolution: {integrity: sha512-yc0rh9BCY6VvvKrZUNejfucuWscy1iRb9JrppuJktsiA9HcEukB3oX9CB7N/CUmCtqzmdwybet6N2aglGL/SUQ==}
+  '@zk-kit/lean-imt@2.1.0':
+    resolution: {integrity: sha512-RbG6QmTrurken7HzrJQouKiXKyGTpcoD+czQ1jvExRIA83k9w+SEsRdB7anPE8WoMKWAandDe09BzDCk6AirSw==}
 
   '@zk-kit/poseidon-cipher@0.3.1':
     resolution: {integrity: sha512-3plpr4Dk0EADSRPJ0NLNt7x+QG8zlJhT264zVGRxgl4yhraE2C/wAxrclUx1mcw8I04hYoXf1BTd0noAIwd5/A==}
@@ -11962,6 +11962,17 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@ethereum-attestation-service/eas-contracts@1.7.1(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4)':
+    dependencies:
+      hardhat: 2.22.4(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - c-kzg
+      - supports-color
+      - ts-node
+      - typescript
+      - utf-8-validate
+
   '@ethereum-attestation-service/eas-sdk@1.6.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.15)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)':
     dependencies:
       '@ethereum-attestation-service/eas-contracts': 1.4.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.15)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
@@ -12393,7 +12404,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -13886,18 +13897,18 @@ snapshots:
     dependencies:
       '@zk-kit/lean-imt.sol': 2.0.0
 
-  '@semaphore-protocol/core@4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@semaphore-protocol/core@4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@semaphore-protocol/group': 4.0.0-beta.16
-      '@semaphore-protocol/identity': 4.0.0-beta.16
-      '@semaphore-protocol/proof': 4.0.0-beta.16(@semaphore-protocol/group@4.0.0-beta.16)(@semaphore-protocol/identity@4.0.0-beta.16)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@semaphore-protocol/group': 4.0.3
+      '@semaphore-protocol/identity': 4.0.3
+      '@semaphore-protocol/proof': 4.0.3(@semaphore-protocol/group@4.0.3)(@semaphore-protocol/identity@4.0.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@semaphore-protocol/data@4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@semaphore-protocol/data@4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@semaphore-protocol/utils': 4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@semaphore-protocol/utils': 4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       axios: 1.6.6
       ethers: 6.11.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -13905,23 +13916,23 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@semaphore-protocol/group@4.0.0-beta.16':
+  '@semaphore-protocol/group@4.0.3':
     dependencies:
-      '@zk-kit/lean-imt': 2.0.1
+      '@zk-kit/lean-imt': 2.1.0
       '@zk-kit/utils': 1.0.0
 
-  '@semaphore-protocol/identity@4.0.0-beta.16':
+  '@semaphore-protocol/identity@4.0.3':
     dependencies:
       '@zk-kit/baby-jubjub': 1.0.1
       '@zk-kit/eddsa-poseidon': 1.0.2
       '@zk-kit/utils': 1.2.0
       poseidon-lite: 0.2.0
 
-  '@semaphore-protocol/proof@4.0.0-beta.16(@semaphore-protocol/group@4.0.0-beta.16)(@semaphore-protocol/identity@4.0.0-beta.16)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@semaphore-protocol/proof@4.0.3(@semaphore-protocol/group@4.0.3)(@semaphore-protocol/identity@4.0.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@semaphore-protocol/group': 4.0.0-beta.16
-      '@semaphore-protocol/identity': 4.0.0-beta.16
-      '@semaphore-protocol/utils': 4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@semaphore-protocol/group': 4.0.3
+      '@semaphore-protocol/identity': 4.0.3
+      '@semaphore-protocol/utils': 4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@zk-kit/artifacts': 1.8.0
       '@zk-kit/utils': 1.0.0
       ethers: 6.10.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -13930,7 +13941,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@semaphore-protocol/utils@4.0.0-beta.16(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@semaphore-protocol/utils@4.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -14334,7 +14345,7 @@ snapshots:
 
   '@types/bn.js@4.11.6':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/bn.js@5.1.5':
     dependencies:
@@ -14347,7 +14358,7 @@ snapshots:
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/chai-as-promised@7.1.8':
     dependencies:
@@ -14362,7 +14373,7 @@ snapshots:
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 4.19.5
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/connect@3.4.38':
     dependencies:
@@ -14461,7 +14472,7 @@ snapshots:
 
   '@types/http-proxy@1.17.15':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -14481,7 +14492,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/lodash@4.17.7': {}
 
@@ -14514,7 +14525,7 @@ snapshots:
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/node@10.17.60': {}
 
@@ -14542,7 +14553,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/prettier@2.7.3': {}
 
@@ -14567,13 +14578,13 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/retry@0.12.0': {}
 
   '@types/secp256k1@4.0.6':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/semver@7.5.8': {}
 
@@ -14600,7 +14611,7 @@ snapshots:
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/source-list-map@0.1.6': {}
 
@@ -14648,7 +14659,7 @@ snapshots:
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -14662,7 +14673,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.1.0
     optional: true
 
   '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)':
@@ -15274,9 +15285,9 @@ snapshots:
       '@zk-kit/utils': 1.0.0
       buffer: 6.0.3
 
-  '@zk-kit/excubiae@0.1.0(typescript@5.5.4)':
+  '@zk-kit/excubiae@0.1.0(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4)':
     dependencies:
-      '@ethereum-attestation-service/eas-contracts': 1.7.1(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.14.15)(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
+      '@ethereum-attestation-service/eas-contracts': 1.7.1(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4)
       '@openzeppelin/contracts': 5.0.2
       '@semaphore-protocol/contracts': 4.0.0-beta.16
     transitivePeerDependencies:
@@ -15291,9 +15302,9 @@ snapshots:
     dependencies:
       poseidon-solidity: 0.0.5
 
-  '@zk-kit/lean-imt@2.0.1':
+  '@zk-kit/lean-imt@2.1.0':
     dependencies:
-      '@zk-kit/utils': 1.0.0
+      '@zk-kit/utils': 1.2.0
 
   '@zk-kit/poseidon-cipher@0.3.1':
     dependencies:
@@ -18635,6 +18646,60 @@ snapshots:
       ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       ts-node: 10.9.2(@types/node@20.14.15)(typescript@5.5.4)
+      typescript: 5.5.4
+    transitivePeerDependencies:
+      - bufferutil
+      - c-kzg
+      - supports-color
+      - utf-8-validate
+
+  hardhat@2.22.4(ts-node@10.9.2(typescript@5.5.4))(typescript@5.5.4):
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@metamask/eth-sig-util': 4.0.1
+      '@nomicfoundation/edr': 0.3.8
+      '@nomicfoundation/ethereumjs-common': 4.0.4
+      '@nomicfoundation/ethereumjs-tx': 5.0.4
+      '@nomicfoundation/ethereumjs-util': 9.0.4
+      '@nomicfoundation/solidity-analyzer': 0.1.2
+      '@sentry/node': 5.30.0
+      '@types/bn.js': 5.1.5
+      '@types/lru-cache': 5.1.1
+      adm-zip: 0.4.16
+      aggregate-error: 3.1.0
+      ansi-escapes: 4.3.2
+      boxen: 5.1.2
+      chalk: 2.4.2
+      chokidar: 3.6.0
+      ci-info: 2.0.0
+      debug: 4.3.6(supports-color@8.1.1)
+      enquirer: 2.4.1
+      env-paths: 2.2.1
+      ethereum-cryptography: 1.2.0
+      ethereumjs-abi: 0.6.8
+      find-up: 2.1.0
+      fp-ts: 1.19.3
+      fs-extra: 7.0.1
+      glob: 7.2.0
+      immutable: 4.3.7
+      io-ts: 1.10.4
+      keccak: 3.0.4
+      lodash: 4.17.21
+      mnemonist: 0.38.5
+      mocha: 10.7.0
+      p-map: 4.0.0
+      raw-body: 2.5.2
+      resolve: 1.17.0
+      semver: 6.3.1
+      solc: 0.7.3(debug@4.3.6)
+      source-map-support: 0.5.21
+      stacktrace-parser: 0.1.10
+      tsort: 0.0.1
+      undici: 5.28.4
+      uuid: 8.3.2
+      ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+    optionalDependencies:
+      ts-node: 10.9.2(@types/node@22.1.0)(typescript@5.5.4)
       typescript: 5.5.4
     transitivePeerDependencies:
       - bufferutil
@@ -23781,7 +23846,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.93.0)
-      ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       webpack: 5.93.0
     transitivePeerDependencies:
