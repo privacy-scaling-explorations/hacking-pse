@@ -223,7 +223,10 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
 
   // memo to calculate the voting end date
   const votingEndsAt = useMemo(
-    () => (pollData ? new Date(Number(pollData.deployTime) * 1000 + Number(pollData.duration) * 1000) : new Date()),
+    () =>
+      pollData && pollData.duration !== 0
+        ? new Date(Number(pollData.deployTime) * 1000 + Number(pollData.duration) * 1000)
+        : config.resultsAt,
     [pollData?.deployTime, pollData?.duration],
   );
 
