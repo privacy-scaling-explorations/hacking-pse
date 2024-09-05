@@ -8,7 +8,12 @@ export const SendOtpSchema = z.object({
 export type SendOtp = z.infer<typeof SendOtpSchema>;
 
 export const VerifyOtpSchema = z.object({
-  email: z.string().email().endsWith("@pse.dev"),
+  email: z.string()
+    .email()
+    .endsWith("@pse.dev")
+    .refine(email => !email.includes('+'), {
+      message: "Email must not contain '+'"
+    }),
   otp: z.number().int().gte(100000).lte(999999),
   address: z.string().refine(isAddress, {
     message: "Invalid address",
