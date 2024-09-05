@@ -38,6 +38,9 @@ const createAccountClient = async (
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     chain: config.network,
     bundlerTransport: http(getPimlicoRPCURL()),
+    paymasterContext: {
+      sponsorshipPolicyId: "sp_parallel_pretty_boy"
+    },
     middleware: {
       sponsorUserOperation: paymasterClient.sponsorUserOperation,
       gasPrice: async () =>
