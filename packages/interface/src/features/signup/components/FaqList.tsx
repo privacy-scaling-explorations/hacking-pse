@@ -7,12 +7,12 @@ export const FAQList = (): JSX.Element => (
     <Heading size="6xl">FAQ</Heading>
 
     <FAQItem
-      description="(Please enter the main focus and description of this round.)"
+      description="Vote on your favourite Hacking PSE Projects"
       title="what is the focus of this round?"
     />
 
     <FAQItem
-      description="(This is related to what gatekeeper is used.)"
+      description="Owning a @pse.dev or @ethereum.org email"
       title="Who are the requirements for participation?"
     />
 
@@ -31,7 +31,7 @@ export const FAQList = (): JSX.Element => (
     />
 
     <FAQItem
-      description="Join our Telegram group or Discord channel to learn more!"
+      description="Join our Discord channel #hacking-pse to learn more!"
       title="Do you have any other questions?"
     />
   </div>
