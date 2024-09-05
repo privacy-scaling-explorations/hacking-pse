@@ -188,7 +188,7 @@ const VerifyOtp = ({
 
   return (
     <div className="w-72 sm:w-96">
-      {!otpVerified && (
+      {!isWearerOfHat && !isSemaphoreMember && (
         <Form schema={OtpFieldSchema} onSubmit={(otp) => verifyOtp(otp)}>
           <FormSection
             description="Please enter the one-time-password (OTP) you recieved in your email"
