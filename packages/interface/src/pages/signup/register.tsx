@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 
 import { EligibilityDialog } from "~/components/EligibilityDialog";
@@ -15,6 +15,19 @@ const Register = (): JSX.Element => {
   const { address } = useSmartAccount();
 
   const [emailField, setEmail] = useState<EmailField>();
+  const [otpVerified, setOtpVerified] = useState(false);
+
+  const handleSetEmail = (emailField: EmailField) => {
+    setEmail(emailField);
+    localStorage.setItem("email", emailField.email);
+  };
+
+  useEffect(() => {
+    const email = localStorage.getItem("email");
+    if (email) {
+      setEmail({ email });
+    }
+  }, []);
 
   return (
     <Layout type="home">
@@ -41,9 +54,15 @@ const Register = (): JSX.Element => {
           </span>
         </p>
 
-        <RegisterEmail emailField={emailField} setEmail={setEmail} />
+        <RegisterEmail otpVerified={otpVerified} setEmail={handleSetEmail} />
 
-        {emailField && address && <VerifyOtp emailField={emailField} />}
+        {emailField && address && (
+          <VerifyOtp
+            emailField={emailField}
+            otpVerified={otpVerified}
+            setOtpVerified={setOtpVerified}
+          />
+        )}
       </div>
 
       <FAQList />
