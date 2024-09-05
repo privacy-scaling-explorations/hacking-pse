@@ -2,7 +2,9 @@ import { isAddress } from "viem";
 import z from "zod";
 
 export const SendOtpSchema = z.object({
-  email: z.string().email().endsWith("@pse.dev"),
+  email: z.string().email().endsWith("@pse.dev").refine(email => !email.includes('+'), {
+    message: "Email must not contain '+'"
+  }),
 });
 
 export type SendOtp = z.infer<typeof SendOtpSchema>;
