@@ -40,9 +40,9 @@ export function useApproveApplication(opts?: {
       toast.success("Application approved successfully!");
       opts?.onSuccess?.();
     },
-    onError: (err: { reason?: string; data?: { message: string } }) =>
+    onError: (err: Error | { reason?: string; data?: { message: string } }) =>
       toast.error("Application approve error", {
-        description: err.reason ?? err.data?.message,
+        description: err instanceof Error ? err.message : err.reason ?? err.data?.message
       }),
   });
 }

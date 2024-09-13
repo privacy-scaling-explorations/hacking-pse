@@ -5,9 +5,9 @@ import { type DefaultError, type UseMutationResult, useMutation } from "@tanstac
 import { useEthersSigner } from "~/hooks/useEthersSigner";
 import { createAttestation } from "~/lib/eas/createAttestation";
 import useSmartAccount from "./useSmartAccount";
-import { Address, Hex } from "viem";
-import { publicClient } from "~/utils/permissionless";
+import { Address, encodeFunctionData, Hex } from "viem";
 import { eas } from "~/config";
+import sendUserOperation from "~/utils/sendUserOperation";
 
 export function useCreateAttestation(): UseMutationResult<
   AttestationRequest,
@@ -60,17 +60,21 @@ export function useAttest(): UseMutationResult<Hex, DefaultError, MultiAttestati
       }
       
       try {
-        const { request } = await publicClient.simulateContract({
-          account: smartAccount,
-          address: eas.contracts.eas as Address,
+        const to = eas.contracts.eas as Address;
+        const calldata = encodeFunctionData({
           abi: EASFactory.abi,
           functionName: "multiAttest",
           args: [multiAttestationRequests],
         });
-        return await smartAccountClient.writeContract(request);
+        return await sendUserOperation(
+          to,
+          calldata,
+          smartAccount,
+          smartAccountClient
+        );
       } catch (error: unknown) {
         console.error(error);
-        throw new Error("Error attesting");
+        throw new Error(`Error attesting ${error instanceof Error ? `- ${error.message}` : ""}`);
       }
     },
   });

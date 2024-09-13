@@ -59,7 +59,7 @@ export const ApplicationForm = (): JSX.Element => {
       toast.error("Application create error", {
         description: err.reason ?? err.data?.message,
       })
-      console.log(err)
+      console.error(err)
     },
   })
 

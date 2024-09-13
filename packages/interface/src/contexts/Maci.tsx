@@ -293,7 +293,7 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         .then(() => onSuccess())
         .catch((err: Error) => {
           setError(err.message);
-          console.log(err.message)
+          console.error(err.message)
           return onError(err.message);
         })
         .finally(() => {
