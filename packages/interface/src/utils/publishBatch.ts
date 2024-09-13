@@ -13,11 +13,11 @@ import {
   PrivKey,
 } from "maci-domainobjs";
 import { genRandomSalt } from "maci-crypto";
-import { publicClient } from "./permissionless";
 import { SmartAccountClient } from "permissionless";
 import { EntryPoint } from "permissionless/types";
 import { KernelEcdsaSmartAccount } from "permissionless/accounts";
-import { Address, HttpTransport, Chain } from "viem";
+import { Address, HttpTransport, Chain, encodeFunctionData } from "viem";
+import sendUserOperation from "./sendUserOperation";
 
 const MESSAGE_TREE_ARITY = 5;
 
@@ -25,7 +25,6 @@ type ISmartAccountPublishBatchArgs = IPublishBatchArgs & {
   smartAccount: KernelEcdsaSmartAccount<EntryPoint, HttpTransport, Chain>;
   smartAccountClient: SmartAccountClient<EntryPoint, HttpTransport, Chain>;
 };
-
 
 /**
  * @notice copied from maci-cli/sdk to add sponsorship
@@ -148,17 +147,23 @@ export const publishBatch = async ({
     y: bigint;
   }[];
 
-  const { request } = await publicClient.simulateContract({
-    account: smartAccount,
-    address: pollContracts.poll as Address,
+  const to = pollContracts.poll as Address;
+  const calldata = encodeFunctionData({
     abi: PollFactory.abi,
     functionName: "publishMessageBatch",
     args: [reversedMessages, reversedKeys],
   });
-  const txHash = await smartAccountClient.writeContract(request);
+
+  const userOpHash = await sendUserOperation(
+    to,
+    calldata,
+    smartAccount,
+    smartAccountClient
+  );
+  console.log("publishMessageBatch userOpHash", userOpHash);
 
   return {
-    hash: txHash,
+    hash: userOpHash,
     encryptedMessages: preparedMessages,
     privateKey: encryptionKeypair.privKey.serialize(),
   };

@@ -23,7 +23,7 @@ export interface MaciContextType {
   onSignup: (onError: () => void, onSuccess: () => void) => Promise<void>;
   onVote: (
     args: IVoteArgs[],
-    onError: () => void | Promise<void>,
+    onError: (message: string) => void | Promise<void>,
     onSuccess: () => void | Promise<void>
   ) => Promise<void>;
   updateEligibility: (

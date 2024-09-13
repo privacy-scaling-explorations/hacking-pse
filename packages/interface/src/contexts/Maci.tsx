@@ -259,13 +259,13 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
 
   // function to be used to vote on a poll
   const onVote = useCallback(
-    async (votes: IVoteArgs[], onError: () => Promise<void>, onSuccess: () => Promise<void>) => {
+    async (votes: IVoteArgs[], onError: (message: string) => Promise<void>, onSuccess: () => Promise<void>) => {
       if (!signer || !smartAccount || !smartAccountClient || !stateIndex || !pollData) {
         return;
       }
 
       if (!votes.length) {
-        onError();
+        onError("No votes provided");
         setError("No votes provided");
         return;
       }
@@ -293,7 +293,8 @@ export const MaciProvider: React.FC<MaciProviderProps> = ({ children }: MaciProv
         .then(() => onSuccess())
         .catch((err: Error) => {
           setError(err.message);
-          return onError();
+          console.log(err.message)
+          return onError(err.message);
         })
         .finally(() => {
           setIsLoading(false);
