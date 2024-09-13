@@ -20,8 +20,8 @@ export const SubmitBallotButton = (): JSX.Element => {
     [sumBallot, ballot, initialVoiceCredits],
   );
 
-  const onVotingError = useCallback(() => {
-    toast.error("Voting error");
+  const onVotingError = useCallback((message: string) => {
+    toast.error(`Voting error ${message}`);
   }, []);
 
   const handleSubmitBallot = useCallback(async () => {
