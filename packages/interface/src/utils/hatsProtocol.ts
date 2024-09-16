@@ -1,7 +1,7 @@
 import { HatsClient } from "@hatsprotocol/sdk-v1-core";
 import { createPublicClient, http, type PublicClient } from "viem";
 
-import { config } from "~/config";
+import { config, getRPCURL } from "~/config";
 
 /**
  * Get an HatsClient instance to check whether the connected wallet owns the required hat
@@ -10,7 +10,7 @@ import { config } from "~/config";
 export const getHatsClient = (): HatsClient => {
   const client = createPublicClient({
     chain: config.network,
-    transport: http(),
+    transport: http(getRPCURL()),
   });
 
   const hatsClient = new HatsClient({
